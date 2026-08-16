@@ -1,0 +1,29 @@
+{
+  "schemaVersion": "mxis-weak-supervision-synthetic-dataset-v0.1",
+  "caseCount": 14,
+  "validation": {
+    "passed": 14,
+    "total": 14
+  },
+  "byScenario": {
+    "stable_storage": 1,
+    "sustained_high_humidity": 1,
+    "mould_dose_approach": 1,
+    "mould_dose_reached": 1,
+    "dry_leather_exposure": 1,
+    "warm_moist_sensitive_leather": 1,
+    "active_handling_day": 1,
+    "shock_heavy_windows": 1,
+    "insufficient_data": 1,
+    "timestamp_missing": 1,
+    "wet_event_sensitive_material": 1,
+    "visible_mould_reported": 1,
+    "suede_wet_nap_matting": 1,
+    "coated_finish_tacky": 1
+  },
+  "byInspectionNeed": {
+    "NONE": 7,
+    "CONDITIONAL": 4,
+    "REQUIRED": 3
+  }
+}

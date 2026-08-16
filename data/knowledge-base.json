@@ -1,0 +1,551 @@
+{
+  "kb_version": "0.1.0",
+  "created_at": "2026-08-16",
+  "purpose": "Initial Material x Risk Factor Knowledge Base for MXIS Care-model-v1 rule/scoring engine.",
+  "principles": [
+    "Do not express unsupported probabilities.",
+    "Use numeric thresholds only when directly stated by a source or conservatively derivable from a stated preservation range.",
+    "Separate observable exposure, material-specific inference, care decision, and inspection trigger.",
+    "Prefer official conservation institutions for thresholds; use brand official guides for product-specific care actions and scope."
+  ],
+  "schema": {
+    "entry_id": "Stable unique key.",
+    "material_id": "coated_cowhide | natural_leather | suede | canvas",
+    "risk_factor": "humidity | temperature_heat | dryness | uv_light | physical_shock_abrasion | continuous_usage_rest",
+    "applicability": "What product/material context this row can be applied to.",
+    "source_ids": "Evidence records supporting this row.",
+    "evidence_strength": "A = conservation institution / peer-reviewed or official brand + conservation agreement; B = official brand or conservation guidance without material-specific threshold; C = expert/trade support only.",
+    "threshold_candidates": [
+      {
+        "metric": "Sensor/computed feature name candidate.",
+        "operator": "comparison operator or range.",
+        "value": "number or range, null when no threshold is supported.",
+        "unit": "measurement unit.",
+        "provenance": "direct | conservative_interpretation | no_numeric_threshold",
+        "notes": "How to use or why not to use."
+      }
+    ],
+    "degradation_mechanisms": "Mechanism language for model explanation.",
+    "recommended_actions": "Care actions suitable for user-facing decision engine.",
+    "inspection_triggers": "Conditions where MXIS should recommend expert/brand inspection instead of overconfident self-care.",
+    "rule_engine_features": "Feature candidates for future scoring."
+  },
+  "sources": [
+    {
+      "source_id": "CCI_LEATHER_8_2",
+      "title": "Care of Alum, Vegetable and Mineral-tanned Leather",
+      "publisher": "Canadian Conservation Institute",
+      "url": "https://www.canada.ca/en/conservation-institute/services/conservation-preservation-publications/canadian-conservation-institute-notes/care-alum-vegetable-mineral-leather.html",
+      "trust_level": "A",
+      "scope": "Museum leather objects; strong for RH, temperature, light, storage, support, mould response."
+    },
+    {
+      "source_id": "CCI_LEATHER_GUIDELINES",
+      "title": "Caring for leather, skin and fur",
+      "publisher": "Canadian Conservation Institute",
+      "url": "https://www.canada.ca/en/conservation-institute/services/preventive-conservation/guidelines-collections/caring-leather-skin-fur.html",
+      "trust_level": "A",
+      "scope": "Preventive conservation; strong for mechanisms, RH over 65%, light/UV, heat/RH interaction."
+    },
+    {
+      "source_id": "CCI_LEATHER_MOULD",
+      "title": "Removing Mould from Leather",
+      "publisher": "Canadian Conservation Institute",
+      "url": "https://www.canada.ca/en/conservation-institute/services/conservation-preservation-publications/canadian-conservation-institute-notes/removing-mould-leather.html",
+      "trust_level": "A",
+      "scope": "Leather mould response and approximate RH/time bands: 90-100% RH for 2 days, 80% RH for 10 days, 70% RH for 100 days."
+    },
+    {
+      "source_id": "CCI_LIGHT",
+      "title": "Agent of deterioration: light, ultraviolet and infrared",
+      "publisher": "Canadian Conservation Institute",
+      "url": "https://www.canada.ca/en/conservation-institute/services/agents-deterioration/light.html",
+      "trust_level": "A",
+      "scope": "General collections light thresholds; useful for textile/leather lux and UV candidates."
+    },
+    {
+      "source_id": "CCI_TEXTILES",
+      "title": "Caring for textiles and costumes",
+      "publisher": "Canadian Conservation Institute",
+      "url": "https://www.canada.ca/en/conservation-institute/services/preventive-conservation/guidelines-collections/textiles-costumes.html",
+      "trust_level": "A",
+      "scope": "Textile material risks including light, RH, mould, physical forces."
+    },
+    {
+      "source_id": "CCI_TEXTILES_ENV",
+      "title": "Textiles and the Environment",
+      "publisher": "Canadian Conservation Institute",
+      "url": "https://www.canada.ca/en/conservation-institute/services/conservation-preservation-publications/canadian-conservation-institute-notes/textiles-environment.html",
+      "trust_level": "A",
+      "scope": "Textile RH and light management; damp over 70% RH as avoid condition."
+    },
+    {
+      "source_id": "SMITHSONIAN_TEXTILE_CLIMATE",
+      "title": "Climate and Textiles Storage",
+      "publisher": "Smithsonian Museum Conservation Institute",
+      "url": "https://mci.si.edu/climate-and-textiles-storage",
+      "trust_level": "A",
+      "scope": "Textile storage climate and buffering with acid-free boxes/tissue."
+    },
+    {
+      "source_id": "SMITHSONIAN_TEXTILE_MOLD",
+      "title": "Mold and Mildew on Textiles",
+      "publisher": "Smithsonian Museum Conservation Institute",
+      "url": "https://mci.si.edu/mold-and-mildew-textiles",
+      "trust_level": "A",
+      "scope": "Mould risk for cotton/linen cellulosics; stagnant air above 80% RH."
+    },
+    {
+      "source_id": "HERMES_LEATHER_CARE",
+      "title": "Leather Care Instructions",
+      "publisher": "Hermes",
+      "url": "https://www.hermes.com/us/en/content/89726-leathercareinstructions/",
+      "trust_level": "B",
+      "scope": "Luxury leather product care; water, heat, light, humidity/dryness, rest, avoid anti-humidity sachets."
+    },
+    {
+      "source_id": "LV_PRODUCT_CARE",
+      "title": "How do I take care of my leather or canvas item?",
+      "publisher": "Louis Vuitton",
+      "url": "https://en.louisvuitton.com/eng-nl/faq/products/eu-how-do-i-take-care-of-my-leather-or-canvas-item",
+      "trust_level": "B",
+      "scope": "Luxury leather and canvas care; natural leather, Vernis, coated/printed canvas, abrasion, water, heat/light, rotation."
+    },
+    {
+      "source_id": "LV_GENERAL_CARE",
+      "title": "Welcome to the House - Product Care",
+      "publisher": "Louis Vuitton",
+      "url": "https://us.louisvuitton.com/eng-us/faq/products/welcome-to-the-house-product-care",
+      "trust_level": "B",
+      "scope": "Brand-level care guidance; rotate use, avoid water/oil/perfume/alcohol, heat/light/humidity, rough surfaces."
+    },
+    {
+      "source_id": "GUCCI_HAND_BAG_CARE",
+      "title": "How to clean and care for Gucci handbags",
+      "publisher": "Gucci",
+      "url": "https://www.gucci.com/us/en/nst/handbags-care-guide",
+      "trust_level": "B",
+      "scope": "Handbag care; direct light/heat/humidity/rain/rough surfaces, wipe after each use, dust bag, special material escalation."
+    },
+    {
+      "source_id": "LOEWE_CARE",
+      "title": "Care Guide",
+      "publisher": "Loewe",
+      "url": "https://www.loewe.com/usa/en/care-guide/CG-SLG-20.html",
+      "trust_level": "B",
+      "scope": "Leather, suede, canvas product care; avoid direct light/heat, water/oils/perfumes/cosmetics, do not overfill, dry at room temperature."
+    },
+    {
+      "source_id": "BURBERRY_PRODUCT_CARE",
+      "title": "Product Care",
+      "publisher": "Burberry",
+      "url": "https://us.burberry.com/c/customer-service/faqs/product-care/",
+      "trust_level": "B",
+      "scope": "Suede/nubuck/coated product handling; susceptible to fading, abrasion, colour transfer; professional cleaning."
+    }
+  ],
+  "entries": [
+    {
+      "entry_id": "KB-001",
+      "material_id": "coated_cowhide",
+      "risk_factor": "humidity",
+      "applicability": "Finished/coated cowhide or calfskin luxury bags; not exotic skin.",
+      "source_ids": ["CCI_LEATHER_8_2", "CCI_LEATHER_GUIDELINES", "CCI_LEATHER_MOULD", "HERMES_LEATHER_CARE", "GUCCI_HAND_BAG_CARE"],
+      "evidence_strength": "A",
+      "threshold_candidates": [
+        {"metric": "ambient_rh", "operator": "range", "value": "45-55", "unit": "%RH", "provenance": "direct", "notes": "CCI recommended stable leather storage range."},
+        {"metric": "ambient_rh", "operator": ">", "value": 65, "unit": "%RH", "provenance": "direct", "notes": "Preventive caution/action threshold for mould and hydrolytic degradation risk; not a damage occurrence threshold."},
+        {"metric": "leather_mould_dose", "operator": ">=", "value": 1.0, "unit": "normalized dose", "provenance": "conservative_interpretation", "notes": "Derived from CCI mould time bands: 90-100% RH for 2 days, 80% RH for 10 days, 70% RH for 100 days. Use as damage-supporting exposure, not probability."},
+        {"metric": "rh_fluctuation", "operator": "avoid_extremes", "value": null, "unit": "%RH change", "provenance": "direct", "notes": "Do not score without defining local baseline and sampling window."}
+      ],
+      "degradation_mechanisms": ["Moisture can support mould, hydrolysis of collagen fibers, staining/blistering after water contact, and coating appearance change."],
+      "recommended_actions": ["If wet, blot/wipe immediately with soft lint-free cloth.", "Store in temperate dry environment with dust cover.", "Use shape support; avoid anti-humidity sachets that over-dry leather."],
+      "inspection_triggers": ["Visible mould or musty odour.", "Blistering, staining, sticky/tacky coating, colour transfer after moisture.", "Repeated RH >65% exposure with poor ventilation."],
+      "rule_engine_features": ["rh_hours_gt_65_7d", "rh_hours_gt_65_30d", "wet_event_reported", "ventilation_low", "visible_mould_reported"]
+    },
+    {
+      "entry_id": "KB-002",
+      "material_id": "coated_cowhide",
+      "risk_factor": "temperature_heat",
+      "applicability": "Finished/coated cowhide or calfskin luxury bags.",
+      "source_ids": ["CCI_LEATHER_8_2", "CCI_LEATHER_GUIDELINES", "HERMES_LEATHER_CARE", "LV_GENERAL_CARE"],
+      "evidence_strength": "A",
+      "threshold_candidates": [
+        {"metric": "ambient_temperature", "operator": "range", "value": "18-20", "unit": "C", "provenance": "direct", "notes": "CCI recommended leather environment."},
+        {"metric": "localized_heat_source", "operator": "present", "value": true, "unit": "boolean", "provenance": "direct", "notes": "Radiator, hot display case, direct sun/window, car interior: avoid rather than numeric score."}
+      ],
+      "degradation_mechanisms": ["Local heat accelerates deterioration through desiccation and protein denaturation; heat also shifts RH and can dry leather."],
+      "recommended_actions": ["Move away from radiator, window, car interior, or direct sun.", "Dry wet leather at room temperature, not with direct heat."],
+      "inspection_triggers": ["Warping, stiffness, tacky finish, cracking, or colour alteration after heat exposure."],
+      "rule_engine_features": ["temp_hours_above_local_comfort_7d", "direct_heat_event_reported", "sun_window_storage_reported"]
+    },
+    {
+      "entry_id": "KB-003",
+      "material_id": "coated_cowhide",
+      "risk_factor": "dryness",
+      "applicability": "Finished/coated cowhide or calfskin luxury bags.",
+      "source_ids": ["CCI_LEATHER_8_2", "CCI_LEATHER_GUIDELINES", "HERMES_LEATHER_CARE"],
+      "evidence_strength": "A",
+      "threshold_candidates": [
+        {"metric": "ambient_rh", "operator": "<", "value": 30, "unit": "%RH", "provenance": "direct", "notes": "CCI: loss of moisture and embrittlement."}
+      ],
+      "degradation_mechanisms": ["Moisture loss reduces flexibility, increasing embrittlement, cracking, and vulnerability during handling."],
+      "recommended_actions": ["Avoid over-drying and moisture-absorbing sachets unless brand/product-specific advice says otherwise.", "Store covered in stable environment; avoid heaters and dry airflow."],
+      "inspection_triggers": ["New cracking, stiffness, powdery surface, or shape distortion after dry exposure."],
+      "rule_engine_features": ["rh_hours_lt_30_7d", "rh_hours_lt_30_30d", "dry_heat_source_reported", "stiffness_reported"]
+    },
+    {
+      "entry_id": "KB-004",
+      "material_id": "coated_cowhide",
+      "risk_factor": "uv_light",
+      "applicability": "Dyed, painted, finished, or coated cowhide/calfskin bags.",
+      "source_ids": ["CCI_LEATHER_8_2", "CCI_LIGHT", "HERMES_LEATHER_CARE", "LV_PRODUCT_CARE"],
+      "evidence_strength": "A",
+      "threshold_candidates": [
+        {"metric": "visible_light", "operator": "<=", "value": 150, "unit": "lux", "provenance": "direct", "notes": "CCI max for unpainted leather display."},
+        {"metric": "visible_light", "operator": "<=", "value": 50, "unit": "lux", "provenance": "direct", "notes": "Use for dyed/painted/light-sensitive leather or conservative luxury colour protection."},
+        {"metric": "uv_content", "operator": "<=", "value": 75, "unit": "uW/lm", "provenance": "direct", "notes": "CCI traditional maximum UV level."}
+      ],
+      "degradation_mechanisms": ["Light damage is cumulative and irreversible; UV/visible light can fade dyes and weaken leather through photochemical degradation; IR/heat dries leather."],
+      "recommended_actions": ["Avoid direct sunlight and window display.", "Store in dust cover/box away from light.", "Limit cumulative display/exposure time."],
+      "inspection_triggers": ["Noticeable fading, yellowing, uneven colour, or cracking on light-exposed panels."],
+      "rule_engine_features": ["direct_sun_exposure_hours_7d", "lux_hours_estimate_30d", "uv_exposure_proxy", "light_sensitive_color"]
+    },
+    {
+      "entry_id": "KB-005",
+      "material_id": "coated_cowhide",
+      "risk_factor": "physical_shock_abrasion",
+      "applicability": "Finished/coated cowhide/calfskin, especially corners, handles, and coated surfaces.",
+      "source_ids": ["LV_PRODUCT_CARE", "LV_GENERAL_CARE", "GUCCI_HAND_BAG_CARE", "CCI_LEATHER_8_2"],
+      "evidence_strength": "B",
+      "threshold_candidates": [
+        {"metric": "abrasive_contact_event", "operator": "present", "value": true, "unit": "boolean", "provenance": "direct", "notes": "Brands directly warn against rough/hard surfaces but do not give numeric limits."},
+        {"metric": "overload_event", "operator": "present", "value": true, "unit": "boolean", "provenance": "direct", "notes": "Brands warn overpacking distorts shape; no weight threshold supported."}
+      ],
+      "degradation_mechanisms": ["Abrasion wears grain/coating at corners and folds; overload deforms silhouette and increases strain at handles/attachments."],
+      "recommended_actions": ["Avoid hard/rough surfaces and floor placement.", "Do not overpack; support shape in storage.", "Wipe dust after each use with soft dry cloth."],
+      "inspection_triggers": ["Deep corner wear, coating loss, handle strain, torn stitch, loose hardware, structural deformation."],
+      "rule_engine_features": ["shock_event_count", "corner_abrasion_reported", "overload_reported", "rough_surface_contact_reported"]
+    },
+    {
+      "entry_id": "KB-006",
+      "material_id": "coated_cowhide",
+      "risk_factor": "continuous_usage_rest",
+      "applicability": "Luxury leather bags subject to frequent daily use.",
+      "source_ids": ["HERMES_LEATHER_CARE", "LV_GENERAL_CARE", "GUCCI_HAND_BAG_CARE"],
+      "evidence_strength": "B",
+      "threshold_candidates": [
+        {"metric": "continuous_use_days", "operator": "monitor", "value": null, "unit": "days", "provenance": "no_numeric_threshold", "notes": "Brands recommend rest/rotation but provide no exact day count."}
+      ],
+      "degradation_mechanisms": ["Frequent uninterrupted wear concentrates abrasion, handle strain, body oils, dirt, and shape fatigue."],
+      "recommended_actions": ["Rotate use periodically.", "Rest in dust cover with tissue/bubble support and straps positioned correctly.", "Wipe after each use before storage."],
+      "inspection_triggers": ["Progressive shape collapse, handle deformation, persistent odour/soil, recurring corner wear despite care."],
+      "rule_engine_features": ["usage_days_7d", "usage_days_30d", "rest_days_30d", "post_use_wipe_confirmed"]
+    },
+    {
+      "entry_id": "KB-007",
+      "material_id": "natural_leather",
+      "risk_factor": "humidity",
+      "applicability": "Uncoated/natural full-grain or vegetable-tanned cowhide such as vachetta/natural leather.",
+      "source_ids": ["CCI_LEATHER_8_2", "CCI_LEATHER_GUIDELINES", "CCI_LEATHER_MOULD", "LV_PRODUCT_CARE"],
+      "evidence_strength": "A",
+      "threshold_candidates": [
+        {"metric": "ambient_rh", "operator": "range", "value": "45-55", "unit": "%RH", "provenance": "direct", "notes": "CCI recommended leather storage range."},
+        {"metric": "ambient_rh", "operator": ">", "value": 65, "unit": "%RH", "provenance": "direct", "notes": "Preventive caution/action threshold for mould/hydrolytic degradation; vegetable-tanned leather also vulnerable to darkening/stiffening in warm moist conditions."},
+        {"metric": "leather_mould_dose", "operator": ">=", "value": 1.0, "unit": "normalized dose", "provenance": "conservative_interpretation", "notes": "Derived from CCI mould time bands. Treat as damage-supporting exposure, not confirmed damage."}
+      ],
+      "degradation_mechanisms": ["Natural/vegetable-tanned leather can absorb moisture, stain, darken, stiffen, embrittle, and undergo hydrolytic breakdown under prolonged warm/moist conditions."],
+      "recommended_actions": ["Protect from humidity, water spray, and rain.", "If wet, blot immediately with light-coloured lint-free cloth.", "Avoid home remedies/oils/creams unless brand-approved."],
+      "inspection_triggers": ["Water stains before patina, mould, darkening plus stiffness, powdery surface, persistent moisture odour."],
+      "rule_engine_features": ["rh_hours_gt_65_7d", "wet_event_reported", "warm_moist_exposure_hours", "patina_stage"]
+    },
+    {
+      "entry_id": "KB-008",
+      "material_id": "natural_leather",
+      "risk_factor": "temperature_heat",
+      "applicability": "Uncoated/natural full-grain or vegetable-tanned cowhide.",
+      "source_ids": ["CCI_LEATHER_8_2", "CCI_LEATHER_GUIDELINES", "LV_PRODUCT_CARE", "HERMES_LEATHER_CARE"],
+      "evidence_strength": "A",
+      "threshold_candidates": [
+        {"metric": "ambient_temperature", "operator": "range", "value": "18-20", "unit": "C", "provenance": "direct", "notes": "CCI recommended leather environment."},
+        {"metric": "localized_heat_source", "operator": "present", "value": true, "unit": "boolean", "provenance": "direct", "notes": "Avoid radiators, hot display cases, car interiors, and sunlight."}
+      ],
+      "degradation_mechanisms": ["Heat accelerates oxidation/hydrolysis and can desiccate leather; warm plus moist conditions increase vegetable-tanned leather darkening, stiffening, and breakdown."],
+      "recommended_actions": ["Keep away from direct heat and overheated car interiors.", "Dry naturally at room temperature after water exposure."],
+      "inspection_triggers": ["Rapid colour change, new stiffness, cracks, or surface weakness after heat exposure."],
+      "rule_engine_features": ["temp_hours_above_local_comfort_7d", "warm_moist_exposure_hours", "direct_heat_event_reported"]
+    },
+    {
+      "entry_id": "KB-009",
+      "material_id": "natural_leather",
+      "risk_factor": "dryness",
+      "applicability": "Uncoated/natural full-grain or vegetable-tanned cowhide.",
+      "source_ids": ["CCI_LEATHER_8_2", "CCI_LEATHER_GUIDELINES", "HERMES_LEATHER_CARE"],
+      "evidence_strength": "A",
+      "threshold_candidates": [
+        {"metric": "ambient_rh", "operator": "<", "value": 30, "unit": "%RH", "provenance": "direct", "notes": "CCI threshold for moisture loss and embrittlement."}
+      ],
+      "degradation_mechanisms": ["Loss of bound moisture causes embrittlement, cracking, and loss of flexibility; dry handling increases mechanical damage risk."],
+      "recommended_actions": ["Avoid desiccant/anti-humidity sachets for natural leather unless directed by maker.", "Avoid heaters, dry vents, and prolonged dry storage."],
+      "inspection_triggers": ["Cracking, hardening, red/powdery surface, flaking, or loss of flexibility."],
+      "rule_engine_features": ["rh_hours_lt_30_7d", "rh_hours_lt_30_30d", "dry_handling_event_reported"]
+    },
+    {
+      "entry_id": "KB-010",
+      "material_id": "natural_leather",
+      "risk_factor": "uv_light",
+      "applicability": "Natural leather, vegetable-tanned cowhide, light-coloured leather, dyed leather.",
+      "source_ids": ["CCI_LEATHER_8_2", "CCI_LIGHT", "LV_PRODUCT_CARE", "HERMES_LEATHER_CARE"],
+      "evidence_strength": "A",
+      "threshold_candidates": [
+        {"metric": "visible_light", "operator": "<=", "value": 150, "unit": "lux", "provenance": "direct", "notes": "CCI max for unpainted leather."},
+        {"metric": "visible_light", "operator": "<=", "value": 50, "unit": "lux", "provenance": "direct", "notes": "Apply to dyed/painted/light-sensitive colours; conservative for light-coloured luxury leather."},
+        {"metric": "uv_content", "operator": "<=", "value": 75, "unit": "uW/lm", "provenance": "direct", "notes": "CCI UV maximum."}
+      ],
+      "degradation_mechanisms": ["Photochemical degradation weakens collagen; light causes fading, yellowing, and colour alteration. Natural leather patina may be uneven under sunlight."],
+      "recommended_actions": ["Avoid direct sunlight and prolonged window exposure.", "Store in dust cover/box away from light."],
+      "inspection_triggers": ["Uneven patina, yellowing/fading, surface embrittlement on exposed side."],
+      "rule_engine_features": ["direct_sun_exposure_hours_7d", "lux_hours_estimate_30d", "light_color_material"]
+    },
+    {
+      "entry_id": "KB-011",
+      "material_id": "natural_leather",
+      "risk_factor": "physical_shock_abrasion",
+      "applicability": "Uncoated/natural cowhide and vachetta trims, which scratch and soil easily.",
+      "source_ids": ["LV_PRODUCT_CARE", "LV_GENERAL_CARE", "CCI_LEATHER_8_2"],
+      "evidence_strength": "B",
+      "threshold_candidates": [
+        {"metric": "abrasive_contact_event", "operator": "present", "value": true, "unit": "boolean", "provenance": "direct", "notes": "LV states natural leather is delicate and easily scratched; printed/coated areas susceptible at corners/folds."}
+      ],
+      "degradation_mechanisms": ["Unprotected surface marks, scratches, absorbs oils/soil, and suffers corner/fold abrasion; heavy loading strains structure."],
+      "recommended_actions": ["Avoid abrasive surfaces, cosmetics, oils, perfumes, creams, and hand sanitizers.", "Do not overpack.", "Use soft cloth only; avoid unsupported cleaners."],
+      "inspection_triggers": ["Deep scratches, dark oil stains, torn handle/trim, structural distortion, staining before patina."],
+      "rule_engine_features": ["scratch_reported", "oil_contact_reported", "abrasive_contact_event", "overload_reported"]
+    },
+    {
+      "entry_id": "KB-012",
+      "material_id": "natural_leather",
+      "risk_factor": "continuous_usage_rest",
+      "applicability": "Natural leather bags/trims with patina development and daily carry wear.",
+      "source_ids": ["LV_GENERAL_CARE", "HERMES_LEATHER_CARE"],
+      "evidence_strength": "B",
+      "threshold_candidates": [
+        {"metric": "continuous_use_days", "operator": "monitor", "value": null, "unit": "days", "provenance": "no_numeric_threshold", "notes": "Brand guidance supports rotation/rest but gives no exact interval."}
+      ],
+      "degradation_mechanisms": ["Uninterrupted use raises cumulative exposure to oils, abrasion, humidity/rain events, shape distortion, and uneven patina."],
+      "recommended_actions": ["Rotate periodically and rest in protective cover.", "Support shape; keep straps/zippers positioned as maker recommends."],
+      "inspection_triggers": ["Uneven patina, dark handle staining, recurring wet/soil exposure, loss of silhouette."],
+      "rule_engine_features": ["usage_days_7d", "usage_days_30d", "rest_days_30d", "handle_soiling_reported"]
+    },
+    {
+      "entry_id": "KB-013",
+      "material_id": "suede",
+      "risk_factor": "humidity",
+      "applicability": "Suede/nubuck leather with nap; luxury bags, shoes, trims.",
+      "source_ids": ["CCI_LEATHER_8_2", "CCI_LEATHER_GUIDELINES", "CCI_LEATHER_MOULD", "LOEWE_CARE", "BURBERRY_PRODUCT_CARE", "GUCCI_HAND_BAG_CARE"],
+      "evidence_strength": "A",
+      "threshold_candidates": [
+        {"metric": "ambient_rh", "operator": "range", "value": "45-55", "unit": "%RH", "provenance": "direct", "notes": "Leather baseline from CCI; suede-specific numeric range not found."},
+        {"metric": "ambient_rh", "operator": ">", "value": 65, "unit": "%RH", "provenance": "direct", "notes": "Preventive caution/action threshold; apply cautiously to suede as leather."},
+        {"metric": "leather_mould_dose", "operator": ">=", "value": 1.0, "unit": "normalized dose", "provenance": "conservative_interpretation", "notes": "Derived from CCI leather mould time bands; suede-specific dose data not found."}
+      ],
+      "degradation_mechanisms": ["Moisture can stain suede, alter nap/grain pattern, support mould, and increase colour transfer risk."],
+      "recommended_actions": ["Avoid rain/moisture; blot if wet and air dry at room temperature away from direct heat.", "Use dry suede brush/eraser for surface care; escalate stubborn stains."],
+      "inspection_triggers": ["Water marks, nap matting, mould, dye transfer, colour change after humidity/rain."],
+      "rule_engine_features": ["wet_event_reported", "rh_hours_gt_65_7d", "nap_matted_reported", "color_transfer_reported"]
+    },
+    {
+      "entry_id": "KB-014",
+      "material_id": "suede",
+      "risk_factor": "temperature_heat",
+      "applicability": "Suede/nubuck leather.",
+      "source_ids": ["CCI_LEATHER_8_2", "CCI_LEATHER_GUIDELINES", "LOEWE_CARE", "BURBERRY_PRODUCT_CARE"],
+      "evidence_strength": "A",
+      "threshold_candidates": [
+        {"metric": "ambient_temperature", "operator": "range", "value": "18-20", "unit": "C", "provenance": "direct", "notes": "Leather baseline from CCI; suede-specific numeric range not found."},
+        {"metric": "localized_heat_source", "operator": "present", "value": true, "unit": "boolean", "provenance": "direct", "notes": "Brand and CCI guidance both warn against direct heat."}
+      ],
+      "degradation_mechanisms": ["Heat dries leather fibers, alters nap, accelerates colour change/fading, and can worsen drying marks after water exposure."],
+      "recommended_actions": ["Avoid direct heat, radiators, car interiors, and sunlight.", "Dry naturally at room temperature."],
+      "inspection_triggers": ["Hardened/matted nap, faded patches, stiffness, shrinkage, water mark after heated drying."],
+      "rule_engine_features": ["direct_heat_event_reported", "temp_hours_above_local_comfort_7d", "heated_drying_reported"]
+    },
+    {
+      "entry_id": "KB-015",
+      "material_id": "suede",
+      "risk_factor": "dryness",
+      "applicability": "Suede/nubuck leather.",
+      "source_ids": ["CCI_LEATHER_8_2", "CCI_LEATHER_GUIDELINES"],
+      "evidence_strength": "A",
+      "threshold_candidates": [
+        {"metric": "ambient_rh", "operator": "<", "value": 30, "unit": "%RH", "provenance": "direct", "notes": "Leather dryness threshold; suede-specific threshold not found."}
+      ],
+      "degradation_mechanisms": ["Low RH reduces flexibility; nap and fibers become more vulnerable to abrasion and cracking."],
+      "recommended_actions": ["Avoid very dry storage and heaters.", "Handle gently; avoid aggressive brushing when dry/stiff."],
+      "inspection_triggers": ["Cracking, stiffness, shedding/powdering, loss of nap resilience."],
+      "rule_engine_features": ["rh_hours_lt_30_7d", "stiffness_reported", "abrasion_after_dryness_reported"]
+    },
+    {
+      "entry_id": "KB-016",
+      "material_id": "suede",
+      "risk_factor": "uv_light",
+      "applicability": "Suede/nubuck, especially dyed suede.",
+      "source_ids": ["CCI_LEATHER_8_2", "CCI_LIGHT", "LOEWE_CARE", "BURBERRY_PRODUCT_CARE"],
+      "evidence_strength": "A",
+      "threshold_candidates": [
+        {"metric": "visible_light", "operator": "<=", "value": 50, "unit": "lux", "provenance": "conservative_interpretation", "notes": "Dyed suede is colour-sensitive; CCI uses 50 lux for dyed/painted leather and sensitive collections."},
+        {"metric": "uv_content", "operator": "<=", "value": 75, "unit": "uW/lm", "provenance": "direct", "notes": "CCI UV maximum."}
+      ],
+      "degradation_mechanisms": ["Light fades dyed suede and weakens leather; fading/colour change is cumulative and irreversible."],
+      "recommended_actions": ["Store in dust bag away from sunlight/direct light.", "Avoid prolonged display or window exposure."],
+      "inspection_triggers": ["Uneven fading, colour transfer, nap colour dullness on exposed areas."],
+      "rule_engine_features": ["direct_sun_exposure_hours_7d", "lux_hours_estimate_30d", "dyed_suede_flag"]
+    },
+    {
+      "entry_id": "KB-017",
+      "material_id": "suede",
+      "risk_factor": "physical_shock_abrasion",
+      "applicability": "Suede/nubuck surfaces and trims.",
+      "source_ids": ["BURBERRY_PRODUCT_CARE", "LOEWE_CARE", "GUCCI_HAND_BAG_CARE"],
+      "evidence_strength": "B",
+      "threshold_candidates": [
+        {"metric": "abrasive_contact_event", "operator": "present", "value": true, "unit": "boolean", "provenance": "direct", "notes": "Brand guidance warns suede is susceptible to abrasion; no numeric limit."}
+      ],
+      "degradation_mechanisms": ["Friction crushes or polishes nap, causes fading/abrasion at high-wear areas, and increases dye transfer."],
+      "recommended_actions": ["Brush gently with suede/nubuck brush; avoid hard-bristle/wire brushes.", "Avoid abrasive surfaces and close friction with light/dark transfer-prone fabrics."],
+      "inspection_triggers": ["Nap loss, bald spots, persistent stains, heavy colour transfer, torn suede."],
+      "rule_engine_features": ["abrasive_contact_event", "nap_loss_reported", "color_transfer_reported", "brush_aggression_reported"]
+    },
+    {
+      "entry_id": "KB-018",
+      "material_id": "suede",
+      "risk_factor": "continuous_usage_rest",
+      "applicability": "Suede bags/trims under regular wear.",
+      "source_ids": ["LOEWE_CARE", "BURBERRY_PRODUCT_CARE", "GUCCI_HAND_BAG_CARE"],
+      "evidence_strength": "B",
+      "threshold_candidates": [
+        {"metric": "continuous_use_days", "operator": "monitor", "value": null, "unit": "days", "provenance": "no_numeric_threshold", "notes": "Rest/storage supported, exact usage interval not specified."}
+      ],
+      "degradation_mechanisms": ["Continuous wear compounds friction, nap compression, soil accumulation, rain exposure, and colour transfer risk."],
+      "recommended_actions": ["Rest in dust bag; avoid overfilling.", "Lightly brush after use when dry.", "Rotate away from wet/humid conditions."],
+      "inspection_triggers": ["Persistent nap matting, odour, staining, dye transfer, visible high-wear patches."],
+      "rule_engine_features": ["usage_days_7d", "usage_days_30d", "rest_days_30d", "post_use_brush_confirmed"]
+    },
+    {
+      "entry_id": "KB-019",
+      "material_id": "canvas",
+      "risk_factor": "humidity",
+      "applicability": "Cotton/fabric canvas and luxury coated/printed canvas; apply textile thresholds to uncoated fabric, brand actions to coated canvas.",
+      "source_ids": ["CCI_TEXTILES_ENV", "CCI_TEXTILES", "SMITHSONIAN_TEXTILE_CLIMATE", "SMITHSONIAN_TEXTILE_MOLD", "LV_PRODUCT_CARE", "GUCCI_HAND_BAG_CARE"],
+      "evidence_strength": "A",
+      "threshold_candidates": [
+        {"metric": "ambient_rh", "operator": "range", "value": "37-53", "unit": "%RH", "provenance": "direct", "notes": "Smithsonian textile storage target 45% RH +/-8%."},
+        {"metric": "ambient_rh", "operator": ">", "value": 70, "unit": "%RH", "provenance": "direct", "notes": "CCI textile damp condition to avoid; mould can develop over time."},
+        {"metric": "ambient_rh_stagnant_air", "operator": ">", "value": 80, "unit": "%RH", "provenance": "direct", "notes": "Smithsonian: stagnant air above 80% RH supports mould on cotton/linen cellulosics."}
+      ],
+      "degradation_mechanisms": ["Canvas/cellulosic fibers absorb moisture; high RH promotes mould, shrinkage/swelling, staining, and can cement dust to fibers. Coated canvas may also suffer print/coating changes."],
+      "recommended_actions": ["Avoid humidity/rain; dry immediately with soft cloth when wet.", "Store ventilated in dust bag, not compressed.", "Use damp cloth only where brand allows for coated canvas; avoid leather lotions/chemicals."],
+      "inspection_triggers": ["Mould/musty odour, water staining, coating/print tackiness, fabric shrinkage/warping."],
+      "rule_engine_features": ["rh_hours_gt_70_7d", "rh_hours_gt_80_stagnant_7d", "wet_event_reported", "coated_canvas_flag"]
+    },
+    {
+      "entry_id": "KB-020",
+      "material_id": "canvas",
+      "risk_factor": "temperature_heat",
+      "applicability": "Cotton/fabric canvas and coated/printed canvas.",
+      "source_ids": ["SMITHSONIAN_TEXTILE_CLIMATE", "CCI_TEXTILES_ENV", "LV_PRODUCT_CARE", "GUCCI_HAND_BAG_CARE"],
+      "evidence_strength": "A",
+      "threshold_candidates": [
+        {"metric": "ambient_temperature", "operator": "range", "value": "18.9-23.3", "unit": "C", "provenance": "direct", "notes": "Smithsonian textile target 70F +/-4F converted to Celsius."},
+        {"metric": "localized_heat_source", "operator": "present", "value": true, "unit": "boolean", "provenance": "direct", "notes": "Textiles and brand guides warn against heat sources/bright lights."}
+      ],
+      "degradation_mechanisms": ["Heat accelerates textile deterioration, raises/lowers RH locally, dries fibers, and may alter coated/printed surfaces."],
+      "recommended_actions": ["Keep away from radiators, car interiors, bright heat-producing lights, and direct sun.", "Let damp canvas dry at room temperature with airflow."],
+      "inspection_triggers": ["Brittleness, discoloration, coating softening/tackiness, print distortion after heat."],
+      "rule_engine_features": ["temp_hours_above_23_3_7d", "direct_heat_event_reported", "coated_canvas_heat_flag"]
+    },
+    {
+      "entry_id": "KB-021",
+      "material_id": "canvas",
+      "risk_factor": "dryness",
+      "applicability": "Cotton/fabric canvas, coated canvas, canvas with leather trims.",
+      "source_ids": ["SMITHSONIAN_TEXTILE_CLIMATE", "CCI_TEXTILES_ENV", "LV_PRODUCT_CARE"],
+      "evidence_strength": "A",
+      "threshold_candidates": [
+        {"metric": "ambient_rh", "operator": "<", "value": 37, "unit": "%RH", "provenance": "conservative_interpretation", "notes": "Below Smithsonian lower bound for textile target; low humidity can make natural fibers more brittle, but CCI notes textiles tolerate wide RH if not mixed with sensitive materials."}
+      ],
+      "degradation_mechanisms": ["Low humidity can increase brittleness of natural fibers and may stress leather trims; risk is higher when combined with sunlight/UV or existing embrittlement."],
+      "recommended_actions": ["Avoid heat/dry sunlight; store in breathable dust bag with shape support.", "For canvas with leather trims, follow stricter leather dryness rule if RH <30%."],
+      "inspection_triggers": ["Brittle fabric, cracking coated surface, leather trim cracking, shape distortion."],
+      "rule_engine_features": ["rh_hours_lt_37_30d", "rh_hours_lt_30_7d_if_leather_trim", "trim_material_present"]
+    },
+    {
+      "entry_id": "KB-022",
+      "material_id": "canvas",
+      "risk_factor": "uv_light",
+      "applicability": "Cotton canvas, dyed fabric canvas, coated/printed luxury canvas.",
+      "source_ids": ["CCI_TEXTILES", "CCI_LIGHT", "LV_PRODUCT_CARE", "GUCCI_HAND_BAG_CARE"],
+      "evidence_strength": "A",
+      "threshold_candidates": [
+        {"metric": "visible_light", "operator": "<=", "value": 50, "unit": "lux", "provenance": "direct", "notes": "CCI traditional level for textiles and sensitive collections."},
+        {"metric": "uv_content", "operator": "<=", "value": 75, "unit": "uW/lm", "provenance": "direct", "notes": "CCI UV maximum; UV filtering alone is not enough, visible light level also matters."}
+      ],
+      "degradation_mechanisms": ["Light fades dyes/prints and weakens textile fibers; UV causes yellowing, weakening, and disintegration. Printed canvas ink layers may abrade/fade at wear points."],
+      "recommended_actions": ["Avoid direct sunlight and prolonged display.", "Store in dust bag/box away from light.", "Track cumulative light exposure for valuable items."],
+      "inspection_triggers": ["Fading/yellowing, print fading, brittle fabric, uneven exposure marks."],
+      "rule_engine_features": ["direct_sun_exposure_hours_7d", "lux_hours_estimate_30d", "printed_canvas_flag", "light_color_canvas_flag"]
+    },
+    {
+      "entry_id": "KB-023",
+      "material_id": "canvas",
+      "risk_factor": "physical_shock_abrasion",
+      "applicability": "Canvas, coated canvas, printed canvas, fabric/leather combination bags.",
+      "source_ids": ["LV_PRODUCT_CARE", "LV_GENERAL_CARE", "GUCCI_HAND_BAG_CARE", "CCI_TEXTILES"],
+      "evidence_strength": "B",
+      "threshold_candidates": [
+        {"metric": "abrasive_contact_event", "operator": "present", "value": true, "unit": "boolean", "provenance": "direct", "notes": "LV warns printed canvas ink layers can abrade/fade at corners/folds/bottom; brands warn rough surfaces."},
+        {"metric": "overload_event", "operator": "present", "value": true, "unit": "boolean", "provenance": "direct", "notes": "Brands warn overloading affects shape; no weight threshold."}
+      ],
+      "degradation_mechanisms": ["Friction abrades fabric, coating, and print layers, especially corners/folds/bottom; overload deforms bag and stresses seams/handles."],
+      "recommended_actions": ["Limit contact with hard/rough surfaces.", "Do not place directly on floor.", "Avoid overpacking and heavy contents.", "Clean gently with brand-approved damp/dry cloth method."],
+      "inspection_triggers": ["Print loss, coating peel/tackiness, frayed fabric, worn corners, seam or handle strain."],
+      "rule_engine_features": ["abrasive_contact_event", "corner_wear_reported", "print_layer_present", "overload_reported"]
+    },
+    {
+      "entry_id": "KB-024",
+      "material_id": "canvas",
+      "risk_factor": "continuous_usage_rest",
+      "applicability": "Canvas/coated canvas bags under regular carry.",
+      "source_ids": ["LV_GENERAL_CARE", "LV_PRODUCT_CARE", "GUCCI_HAND_BAG_CARE"],
+      "evidence_strength": "B",
+      "threshold_candidates": [
+        {"metric": "continuous_use_days", "operator": "monitor", "value": null, "unit": "days", "provenance": "no_numeric_threshold", "notes": "Brand guidance supports periodic rotation/rest, no exact number."}
+      ],
+      "degradation_mechanisms": ["Continuous use concentrates abrasion on corners/folds/bottom, pigment transfer, soil accumulation, moisture events, and shape fatigue."],
+      "recommended_actions": ["Rotate use periodically.", "Wipe after use; store in dust bag with shape support.", "Avoid storing other items on top."],
+      "inspection_triggers": ["Recurring corner wear, print fading, coating damage, persistent odour/soil, shape collapse."],
+      "rule_engine_features": ["usage_days_7d", "usage_days_30d", "rest_days_30d", "post_use_wipe_confirmed"]
+    }
+  ],
+  "model_notes": {
+    "initial_scoring_recommendation": "For v1, compute preventive exposure tiers from directly supported thresholds and source-backed dose bands, but phrase outputs as exposure/stress levels rather than disease probabilities.",
+    "preventive_tier_policy": [
+      "Stable zone: preferred storage or low-exposure range.",
+      "Caution zone: stable zone breach or short/sustained exposure that should be corrected before visible change.",
+      "Elevated zone: repeated exposure, sensitive material plus direct event, or partial approach to damage-supporting source bands.",
+      "High zone: exposure reaches source-backed damage-supporting bands, such as CCI leather mould dose >= 1.0, but still does not mean confirmed damage.",
+      "Inspection required: visible symptoms or hard triggers, not sensor exposure alone."
+    ],
+    "accelerated_ageing_policy": "Leather accelerated-ageing papers support the mechanism that heat, humidity and time reduce leather stability, but their severe experimental conditions should be used as upper-bound evidence, not directly as everyday handbag thresholds.",
+    "unsupported_thresholds": [
+      "Do not set shock g-force limits yet; source-backed luxury bag thresholds were not found.",
+      "Do not set exact continuous-use/rest day thresholds yet; brands recommend rotation/rest but do not quantify.",
+      "Do not set universal high-temperature damage threshold beyond recommended storage ranges and direct heat-source events."
+    ],
+    "next_research_targets": [
+      "Leather finishing/coating-specific failure data for patent, polyurethane, acrylic, and pigmented finishes.",
+      "Luxury handbag repair expert interviews for practical inspection triggers.",
+      "Sensor validation: mapping bag microclimate readings to ambient RH/temperature and user event logs."
+    ]
+  }
+}

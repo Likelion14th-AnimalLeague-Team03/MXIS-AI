@@ -1,0 +1,87 @@
+{
+  "schema_version": "mxis-feature-extractor-v0.1",
+  "created_at": "2026-08-16",
+  "input": {
+    "required": ["productId", "deviceId", "analysisWindowDays", "sensorReadings"],
+    "recommended": ["materialId", "materialSubtypes", "samplingWindowSeconds", "userEvents", "userSymptoms"],
+    "sensorReading": {
+      "sequence": "integer",
+      "measuredAt": "unix_epoch_seconds",
+      "temperature": "celsius",
+      "humidity": "percent_rh",
+      "maxShock": "dynamic_acceleration_g",
+      "motionCount": "count"
+    }
+  },
+  "defaults": {
+    "samplingWindowSeconds": 600,
+    "minValidReadings": 24,
+    "minCoverageHours": 24,
+    "activeDayMinWindows": 3
+  },
+  "thresholds": {
+    "leatherRhHigh": 65,
+    "leatherRhLow": 30,
+    "canvasRhDamp": 70,
+    "canvasRhLow": 37,
+    "leatherMouldRh70": 70,
+    "leatherMouldRh80": 80,
+    "leatherMouldRh90": 90,
+    "tempWarmC": 30,
+    "tempExtremeC": 40,
+    "canvasTempUpperC": 23.3,
+    "shockWindowGt1g": 1,
+    "shockWindowGt2g": 2
+  },
+  "computed_features": {
+    "dataSufficiency": [
+      "status",
+      "reason",
+      "validReadingCount",
+      "coverageHours",
+      "invalidTimestampCount",
+      "lastMeasuredAt"
+    ],
+    "environmentFeatures": [
+      "avgTemperatureC7d",
+      "maxTemperatureC7d",
+      "minTemperatureC7d",
+      "avgHumidityRh7d",
+      "maxHumidityRh7d",
+      "minHumidityRh7d",
+      "rhHoursGt657d",
+      "rhHoursGt707d",
+      "rhHoursGt807d",
+      "rhHoursGt907d",
+      "rhHoursLt307d",
+      "rhHoursLt377d",
+      "leatherMouldDose7d",
+      "tempHoursAbove307d",
+      "tempHoursAbove407d",
+      "tempHoursAbove2337d",
+      "warmMoistExposureHours7d"
+    ],
+    "handlingFeatures": [
+      "motionTotal7d",
+      "motionAvgPerActiveWindow7d",
+      "activeWindowCount7d",
+      "inactiveWindowCount7d",
+      "activeWindowRatio7d",
+      "maxShockG7d",
+      "avgMaxShockG7d",
+      "shockWindowsGt1g7d",
+      "shockWindowsGt2g7d",
+      "activeDays7d",
+      "inactiveDays7d",
+      "consecutiveActiveDays",
+      "consecutiveInactiveDays"
+    ]
+  },
+  "notes": [
+    "Feature Extractor does not judge product damage.",
+    "IMU fields are handling exposure proxies, not damage thresholds.",
+    "Light/UV is unavailable in MVP sensor data and should be UNKNOWN unless user/external input is provided.",
+    "SHT40 missing readings reduce coverage because no SensorReading is created.",
+    "measuredAt=0 readings are excluded from exposure duration features."
+  ]
+}

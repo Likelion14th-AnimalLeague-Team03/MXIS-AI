@@ -1,0 +1,41 @@
+{
+  "productId": "MCM001",
+  "deviceId": "SC001",
+  "materialId": "coated_cowhide",
+  "materialSubtypes": ["grained_coated_cowhide"],
+  "analysisWindowDays": 7,
+  "samplingWindowSeconds": 600,
+  "sensorReadings": [
+    {
+      "sequence": 1,
+      "measuredAt": 1735123456,
+      "temperature": 24.8,
+      "humidity": 68.4,
+      "maxShock": 0.32,
+      "motionCount": 9
+    },
+    {
+      "sequence": 2,
+      "measuredAt": 1735124056,
+      "temperature": 24.9,
+      "humidity": 67.8,
+      "maxShock": 0.18,
+      "motionCount": 0
+    }
+  ],
+  "userEvents": {},
+  "userSymptoms": {},
+  "llm": {
+    "enabled": false,
+    "model": "gpt-5-mini",
+    "locale": "ko-KR",
+    "screenContexts": [
+      "home_summary",
+      "diagnosis_home",
+      "care_report",
+      "environment_detail",
+      "care_guide",
+      "reservation_cta"
+    ]
+  }
+}

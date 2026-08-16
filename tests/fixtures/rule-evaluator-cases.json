@@ -1,0 +1,230 @@
+[
+  {
+    "case_id": "VC-001",
+    "input": {
+      "item_id": "VC-001",
+      "material_id": "natural_leather",
+      "material_subtypes": ["vachetta"],
+      "sensor_window": {
+        "sampling_interval_minutes": 60,
+        "rh_readings": [
+          {"ts": "2026-08-15T09:00:00", "rh": 68, "temp_c": 28},
+          {"ts": "2026-08-15T10:00:00", "rh": 70, "temp_c": 29}
+        ],
+        "imu_events": []
+      },
+      "user_events": {"wet_event_reported": true},
+      "user_symptoms": {},
+      "usage_log": {"usage_days_7d": 3, "usage_days_30d": 12}
+    },
+    "expected": {
+      "stress_labels": {"humidity": "ELEVATED"},
+      "care_need": "MEDIUM_HIGH",
+      "inspection_need": "CONDITIONAL",
+      "recommended_actions_include": ["blot_with_lint_free_cloth", "dry_at_room_temperature", "avoid_direct_heat"]
+    }
+  },
+  {
+    "case_id": "VC-002",
+    "input": {
+      "item_id": "VC-002",
+      "material_id": "natural_leather",
+      "sensor_window": {"rh_readings": [], "imu_events": []},
+      "user_events": {},
+      "user_symptoms": {"visible_mould_reported": true},
+      "usage_log": {}
+    },
+    "expected": {
+      "stress_labels": {"humidity": "INSPECTION_REQUIRED"},
+      "care_need": "HIGH",
+      "inspection_need": "REQUIRED",
+      "recommended_actions_include": ["escalate_to_brand_or_specialist"]
+    }
+  },
+  {
+    "case_id": "VC-003",
+    "input": {
+      "item_id": "VC-003",
+      "material_id": "suede",
+      "sensor_window": {"rh_readings": [], "imu_events": []},
+      "user_events": {"wet_event_reported": true},
+      "user_symptoms": {"nap_matting_reported": true},
+      "usage_log": {}
+    },
+    "expected": {
+      "stress_labels": {"humidity": "INSPECTION_REQUIRED"},
+      "care_need": "HIGH",
+      "inspection_need": "REQUIRED",
+      "recommended_actions_include": ["escalate_to_brand_or_specialist"]
+    }
+  },
+  {
+    "case_id": "VC-004",
+    "input": {
+      "item_id": "VC-004",
+      "material_id": "coated_cowhide",
+      "sensor_window": {
+        "sampling_interval_minutes": 60,
+        "rh_readings": [
+          {"ts": "2026-08-15T00:00:00", "rh": 67},
+          {"ts": "2026-08-15T01:00:00", "rh": 68},
+          {"ts": "2026-08-15T02:00:00", "rh": 69},
+          {"ts": "2026-08-15T03:00:00", "rh": 70},
+          {"ts": "2026-08-15T04:00:00", "rh": 66},
+          {"ts": "2026-08-15T05:00:00", "rh": 67},
+          {"ts": "2026-08-15T06:00:00", "rh": 68},
+          {"ts": "2026-08-15T07:00:00", "rh": 69}
+        ],
+        "imu_events": []
+      },
+      "user_events": {},
+      "user_symptoms": {},
+      "usage_log": {}
+    },
+    "expected": {
+      "stress_labels": {"humidity": "CAUTION"},
+      "care_need": "LOW_MEDIUM"
+    }
+  },
+  {
+    "case_id": "VC-005",
+    "input": {
+      "item_id": "VC-005",
+      "material_id": "coated_cowhide",
+      "material_subtypes": ["patent_or_glossy_finish"],
+      "sensor_window": {"rh_readings": [], "imu_events": []},
+      "user_events": {},
+      "user_symptoms": {"sticky_or_tacky_coating_reported": true},
+      "usage_log": {}
+    },
+    "expected": {
+      "care_need": "HIGH",
+      "inspection_need": "REQUIRED",
+      "recommended_actions_include": ["escalate_to_brand_or_specialist"]
+    }
+  },
+  {
+    "case_id": "VC-006",
+    "input": {
+      "item_id": "VC-006",
+      "material_id": "canvas",
+      "material_subtypes": ["coated_canvas"],
+      "sensor_window": {
+        "sampling_interval_minutes": 60,
+        "stagnant_air": true,
+        "rh_readings": [{"ts": "2026-08-15T00:00:00", "rh": 82}],
+        "imu_events": []
+      },
+      "user_events": {},
+      "user_symptoms": {"musty_odour_reported": true},
+      "usage_log": {}
+    },
+    "expected": {
+      "stress_labels": {"humidity": "INSPECTION_REQUIRED"},
+      "care_need": "HIGH",
+      "inspection_need": "REQUIRED"
+    }
+  },
+  {
+    "case_id": "VC-007",
+    "input": {
+      "item_id": "VC-007",
+      "material_id": "canvas",
+      "material_subtypes": ["printed_canvas"],
+      "sensor_window": {"rh_readings": [], "imu_events": []},
+      "user_events": {},
+      "user_symptoms": {"corner_wear_reported": true},
+      "usage_log": {"usage_days_7d": 7, "usage_days_30d": 26}
+    },
+    "expected": {
+      "stress_labels": {"physical_shock_abrasion": "ELEVATED", "continuous_usage_rest": "ELEVATED"},
+      "care_need": "MEDIUM_HIGH",
+      "inspection_need": "CONDITIONAL"
+    }
+  },
+  {
+    "case_id": "VC-008",
+    "input": {
+      "item_id": "VC-008",
+      "material_id": "canvas",
+      "material_subtypes": ["canvas_with_leather_trim"],
+      "sensor_window": {
+        "sampling_interval_minutes": 60,
+        "rh_readings": [{"ts": "2026-08-15T00:00:00", "rh": 25}],
+        "imu_events": []
+      },
+      "user_events": {},
+      "user_symptoms": {"cracking_reported": true},
+      "usage_log": {}
+    },
+    "expected": {
+      "stress_labels": {"dryness": "INSPECTION_REQUIRED"},
+      "care_need": "HIGH",
+      "inspection_need": "REQUIRED"
+    }
+  },
+  {
+    "case_id": "VC-009",
+    "input": {
+      "item_id": "VC-009",
+      "material_id": "suede",
+      "sensor_window": {"rh_readings": [], "imu_events": []},
+      "user_events": {"direct_sun_exposure_reported": true},
+      "user_symptoms": {"fading_or_yellowing_reported": true},
+      "usage_log": {}
+    },
+    "expected": {
+      "stress_labels": {"uv_light": "ELEVATED"},
+      "care_need": "MEDIUM_HIGH",
+      "inspection_need": "CONDITIONAL"
+    }
+  },
+  {
+    "case_id": "VC-010",
+    "input": {
+      "item_id": "VC-010",
+      "material_id": "coated_cowhide",
+      "sensor_window": {
+        "rh_readings": [],
+        "imu_events": [
+          {"accel_magnitude_g": 2.1},
+          {"accel_magnitude_g": 2.4},
+          {"accel_magnitude_g": 2.2},
+          {"accel_magnitude_g": 2.8},
+          {"accel_magnitude_g": 2.0}
+        ]
+      },
+      "user_events": {"overload_reported": true},
+      "user_symptoms": {"shape_collapse_reported": true},
+      "usage_log": {}
+    },
+    "expected": {
+      "stress_labels": {"physical_shock_abrasion": "CAUTION"},
+      "care_need": "MEDIUM",
+      "inspection_need": "CONDITIONAL"
+    }
+  },
+  {
+    "case_id": "VC-011",
+    "input": {
+      "item_id": "VC-011",
+      "material_id": "coated_cowhide",
+      "sensor_window": {
+        "sampling_interval_minutes": 60,
+        "rh_readings": [
+          {"rh": 90, "duration_hours": 48}
+        ],
+        "imu_events": []
+      },
+      "user_events": {},
+      "user_symptoms": {},
+      "usage_log": {}
+    },
+    "expected": {
+      "stress_labels": {"humidity": "HIGH"},
+      "care_need": "HIGH",
+      "inspection_need": "CONDITIONAL",
+      "recommended_actions_include": ["ventilate_storage_area"]
+    }
+  }
+]

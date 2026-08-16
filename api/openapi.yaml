@@ -1,0 +1,240 @@
+openapi: 3.0.3
+info:
+  title: MXIS AI Care API
+  version: 0.1.0
+  description: MVP API for converting Smart Charm sensor readings into frontend aiCareSummary.
+servers:
+  - url: http://127.0.0.1:8765
+paths:
+  /health:
+    get:
+      summary: Health check
+      responses:
+        "200":
+          description: API is running
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: ok
+                  schemaVersion:
+                    type: string
+                    example: mxis-ai-api-v0.1
+  /ai/demo-care-summary:
+    get:
+      summary: Demo AI care summary
+      responses:
+        "200":
+          description: Demo care summary response
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AiCareSummaryResponse"
+  /ai/care-summary:
+    post:
+      summary: Generate AI care summary from sensor readings
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/AiCareSummaryRequest"
+      responses:
+        "200":
+          description: AI care summary response
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AiCareSummaryResponse"
+        "400":
+          description: Invalid request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+components:
+  schemas:
+    SensorReading:
+      type: object
+      required:
+        - sequence
+        - measuredAt
+        - temperature
+        - humidity
+        - maxShock
+        - motionCount
+      properties:
+        sequence:
+          type: integer
+          example: 501
+        measuredAt:
+          type: integer
+          description: Unix seconds. 0 means invalid timestamp.
+          example: 1735123456
+        temperature:
+          type: number
+          format: double
+          description: Celsius
+          example: 24.77
+        humidity:
+          type: number
+          format: double
+          description: Relative humidity percentage
+          example: 68.52
+        maxShock:
+          type: number
+          format: double
+          description: Window-level dynamic acceleration in g. Handling proxy, not damage threshold.
+          example: 0.34
+        motionCount:
+          type: integer
+          description: Window-level motion event count.
+          example: 12
+    AiCareSummaryRequest:
+      type: object
+      required:
+        - productId
+        - materialId
+        - analysisWindowDays
+        - samplingWindowSeconds
+        - sensorReadings
+      properties:
+        productId:
+          type: string
+        productName:
+          type: string
+          nullable: true
+        deviceId:
+          type: string
+          nullable: true
+        materialId:
+          type: string
+          enum:
+            - coated_cowhide
+            - natural_leather
+            - suede
+            - canvas
+        materialSubtypes:
+          type: array
+          items:
+            type: string
+        color:
+          type: string
+          nullable: true
+        analysisWindowDays:
+          type: integer
+          example: 7
+        samplingWindowSeconds:
+          type: integer
+          example: 600
+        sensorReadings:
+          type: array
+          items:
+            $ref: "#/components/schemas/SensorReading"
+        userEvents:
+          type: object
+          additionalProperties: true
+        userSymptoms:
+          type: object
+          additionalProperties: true
+        usageLog:
+          type: object
+          additionalProperties: true
+        llm:
+          type: object
+          description: Optional OpenAI copy generation options.
+          properties:
+            enabled:
+              type: boolean
+              example: true
+            model:
+              type: string
+              example: gpt-5-mini
+            locale:
+              type: string
+              example: ko-KR
+            screenContexts:
+              type: array
+              items:
+                type: string
+              example:
+                - home_summary
+                - diagnosis_home
+                - care_report
+    AiCareSummaryResponse:
+      type: object
+      properties:
+        schemaVersion:
+          type: string
+          example: mxis-ai-api-v0.1
+        product:
+          type: object
+          additionalProperties: true
+        featureSummary:
+          type: object
+          additionalProperties: true
+        aiCareSummary:
+          type: object
+          properties:
+            generatedAt:
+              type: string
+              format: date-time
+            analysisWindowDays:
+              type: integer
+            dataSufficiency:
+              type: object
+              additionalProperties: true
+            productCondition:
+              type: object
+              additionalProperties: true
+            stressLabels:
+              type: object
+              additionalProperties:
+                type: string
+            careDecision:
+              type: object
+              additionalProperties: true
+            explanation:
+              type: object
+              additionalProperties: true
+            llmCopy:
+              type: object
+              description: Screen-specific frontend copy generated by OpenAI or deterministic fallback.
+              additionalProperties: true
+            copyGeneration:
+              type: object
+              description: Copy generation metadata.
+              properties:
+                source:
+                  type: string
+                  enum:
+                    - openai
+                    - deterministic_fallback
+                model:
+                  type: string
+                  nullable: true
+                error:
+                  type: string
+                  nullable: true
+                rawResponseId:
+                  type: string
+                  nullable: true
+            reservationCta:
+              type: object
+              additionalProperties: true
+            evidence:
+              type: object
+              additionalProperties: true
+            debug:
+              type: object
+              additionalProperties: true
+    ErrorResponse:
+      type: object
+      properties:
+        error:
+          type: string
+        message:
+          type: string

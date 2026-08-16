@@ -1,0 +1,228 @@
+{
+  "spec_version": "care-model-v1.1-preventive-tier-draft",
+  "created_at": "2026-08-16",
+  "linked_knowledge_base": {
+    "json": "data/knowledge-base.json",
+    "matrix": "data/material-risk-matrix.tsv"
+  },
+  "purpose": "Deterministic rule/scoring specification for MXIS luxury bag AI care. Produces preventive material-aware exposure tiers, care actions, and inspection decisions without unsupported damage probabilities.",
+  "preventive_tier_policy": [
+    "Do not use accelerated-ageing damage observations directly as everyday handbag thresholds.",
+    "Use conservation and paper-derived damage-supporting bands as upper-bound evidence.",
+    "Warn before visible deformation or damage is expected.",
+    "Reserve INSPECTION_REQUIRED for visible symptoms or hard triggers."
+  ],
+  "materials": [
+    "coated_cowhide",
+    "natural_leather",
+    "suede",
+    "canvas"
+  ],
+  "risk_factors": [
+    "humidity",
+    "temperature_heat",
+    "dryness",
+    "uv_light",
+    "physical_shock_abrasion",
+    "continuous_usage_rest"
+  ],
+  "stress_labels": {
+    "LOW": "No meaningful exposure or symptom.",
+    "CAUTION": "Stable zone breach, short/sustained exposure, or care habit gap requiring preventive correction.",
+    "ELEVATED": "Repeated exposure, sensitive material plus direct event, or partial approach to source-backed damage-supporting bands.",
+    "HIGH": "Source-backed damage-supporting exposure band reached or very strong exposure; not confirmed damage.",
+    "INSPECTION_REQUIRED": "Hard symptom or severe trigger requiring brand/specialist inspection.",
+    "UNKNOWN": "Insufficient input."
+  },
+  "material_sensitivity_modifiers": {
+    "coated_cowhide": {
+      "humidity": "normal",
+      "dryness": "normal",
+      "heat": "normal",
+      "light": "normal",
+      "abrasion": "normal",
+      "water_stain": "medium"
+    },
+    "patent_or_glossy_finish": {
+      "parent_material": "coated_cowhide",
+      "humidity": "normal",
+      "dryness": "normal",
+      "heat": "high",
+      "light": "high",
+      "abrasion": "high",
+      "water_stain": "medium"
+    },
+    "natural_leather": {
+      "humidity": "high",
+      "dryness": "high",
+      "heat": "high",
+      "light": "high",
+      "abrasion": "high",
+      "water_stain": "high"
+    },
+    "vachetta": {
+      "parent_material": "natural_leather",
+      "humidity": "very_high",
+      "dryness": "high",
+      "heat": "high",
+      "light": "high",
+      "abrasion": "high",
+      "water_stain": "very_high"
+    },
+    "suede": {
+      "humidity": "high",
+      "dryness": "normal",
+      "heat": "high",
+      "light": "high",
+      "abrasion": "high",
+      "water_stain": "high"
+    },
+    "nubuck": {
+      "parent_material": "suede",
+      "humidity": "high",
+      "dryness": "normal",
+      "heat": "high",
+      "light": "high",
+      "abrasion": "high",
+      "water_stain": "high"
+    },
+    "canvas": {
+      "humidity": "normal",
+      "dryness": "low",
+      "heat": "normal",
+      "light": "high",
+      "abrasion": "normal",
+      "water_stain": "medium"
+    },
+    "coated_canvas": {
+      "parent_material": "canvas",
+      "humidity": "normal",
+      "dryness": "low",
+      "heat": "high",
+      "light": "high",
+      "abrasion": "high",
+      "water_stain": "medium"
+    },
+    "printed_canvas": {
+      "parent_material": "canvas",
+      "humidity": "normal",
+      "dryness": "low",
+      "heat": "normal",
+      "light": "high",
+      "abrasion": "high",
+      "water_stain": "medium"
+    },
+    "canvas_with_leather_trim": {
+      "parent_material": "canvas",
+      "humidity": "high",
+      "dryness": "high",
+      "heat": "normal",
+      "light": "high",
+      "abrasion": "normal",
+      "water_stain": "high"
+    }
+  },
+  "feature_dictionary": {
+    "rh_hours_gt_65_7d": {"type": "number", "unit": "hours", "risk_factor": "humidity"},
+    "rh_hours_gt_65_30d": {"type": "number", "unit": "hours", "risk_factor": "humidity"},
+    "rh_hours_gt_70_7d": {"type": "number", "unit": "hours", "risk_factor": "humidity"},
+    "rh_hours_gt_80_stagnant_7d": {"type": "number", "unit": "hours", "risk_factor": "humidity"},
+    "rh_hours_lt_30_7d": {"type": "number", "unit": "hours", "risk_factor": "dryness"},
+    "rh_hours_lt_30_30d": {"type": "number", "unit": "hours", "risk_factor": "dryness"},
+    "rh_hours_lt_37_30d": {"type": "number", "unit": "hours", "risk_factor": "dryness"},
+    "warm_moist_exposure_hours_7d": {"type": "number", "unit": "hours", "risk_factor": "temperature_heat"},
+    "temp_hours_above_local_comfort_7d": {"type": "number", "unit": "hours", "risk_factor": "temperature_heat"},
+    "temp_hours_above_23_3_7d": {"type": "number", "unit": "hours", "risk_factor": "temperature_heat"},
+    "direct_heat_event_reported": {"type": "boolean", "risk_factor": "temperature_heat"},
+    "direct_sun_exposure_hours_7d": {"type": "number", "unit": "hours", "risk_factor": "uv_light"},
+    "lux_hours_estimate_30d": {"type": "number", "unit": "lux-hours", "risk_factor": "uv_light"},
+    "uv_exposure_proxy": {"type": ["number", "string"], "risk_factor": "uv_light"},
+    "wet_event_reported": {"type": "boolean", "risk_factor": "humidity"},
+    "abrasive_contact_event": {"type": "boolean", "risk_factor": "physical_shock_abrasion"},
+    "imu_energetic_event_count_7d": {"type": "integer", "unit": "count", "risk_factor": "physical_shock_abrasion", "note": "Window-level maxShock exposure proxy, not a damage threshold."},
+    "imu_max_accel_g_7d": {"type": "number", "unit": "g", "risk_factor": "physical_shock_abrasion", "note": "Maximum dynamic acceleration observed in SensorReading windows."},
+    "motion_total_7d": {"type": "integer", "unit": "count", "risk_factor": "physical_shock_abrasion", "note": "Cumulative motionCount proxy for handling/abrasion exposure."},
+    "active_window_count_7d": {"type": "integer", "unit": "count", "risk_factor": "physical_shock_abrasion", "note": "Number of SensorReading windows with motionCount >= 1."},
+    "overload_reported": {"type": "boolean", "risk_factor": "physical_shock_abrasion"},
+    "usage_days_7d": {"type": "integer", "unit": "days", "risk_factor": "continuous_usage_rest"},
+    "usage_days_30d": {"type": "integer", "unit": "days", "risk_factor": "continuous_usage_rest"},
+    "rest_days_30d": {"type": "integer", "unit": "days", "risk_factor": "continuous_usage_rest"},
+    "post_use_wipe_confirmed": {"type": "boolean", "risk_factor": "continuous_usage_rest"},
+    "post_use_brush_confirmed": {"type": "boolean", "risk_factor": "continuous_usage_rest"},
+    "visible_mould_reported": {"type": "boolean", "category": "symptom"},
+    "musty_odour_reported": {"type": "boolean", "category": "symptom"},
+    "water_stain_reported": {"type": "boolean", "category": "symptom"},
+    "sticky_or_tacky_coating_reported": {"type": "boolean", "category": "symptom"},
+    "blistering_reported": {"type": "boolean", "category": "symptom"},
+    "cracking_reported": {"type": "boolean", "category": "symptom"},
+    "stiffness_reported": {"type": "boolean", "category": "symptom"},
+    "powdery_surface_reported": {"type": "boolean", "category": "symptom"},
+    "nap_matting_reported": {"type": "boolean", "category": "symptom"},
+    "nap_loss_reported": {"type": "boolean", "category": "symptom"},
+    "dye_transfer_reported": {"type": "boolean", "category": "symptom"},
+    "corner_wear_reported": {"type": "boolean", "category": "symptom"},
+    "deep_scratch_reported": {"type": "boolean", "category": "symptom"},
+    "handle_strain_reported": {"type": "boolean", "category": "symptom"},
+    "shape_collapse_reported": {"type": "boolean", "category": "symptom"}
+  },
+  "inspection_triggers": [
+    {"trigger_code": "visible_mould", "condition": "visible_mould_reported == true", "severity": "hard", "materials": ["all"], "decision": "INSPECTION_REQUIRED"},
+    {"trigger_code": "musty_odour_after_humidity", "condition": "musty_odour_reported == true AND humidity_stress != LOW", "severity": "hard", "materials": ["all"], "decision": "INSPECTION_REQUIRED"},
+    {"trigger_code": "water_stain_natural_or_suede", "condition": "water_stain_reported == true", "severity": "hard", "materials": ["natural_leather", "suede"], "decision": "INSPECTION_REQUIRED"},
+    {"trigger_code": "sticky_tacky_coating", "condition": "sticky_or_tacky_coating_reported == true", "severity": "hard", "materials": ["coated_cowhide", "coated_canvas", "patent_or_glossy_finish"], "decision": "INSPECTION_REQUIRED"},
+    {"trigger_code": "blistering_after_moisture", "condition": "blistering_reported == true", "severity": "hard", "materials": ["coated_cowhide", "coated_canvas"], "decision": "INSPECTION_REQUIRED"},
+    {"trigger_code": "active_cracking", "condition": "cracking_reported == true", "severity": "hard", "materials": ["coated_cowhide", "natural_leather", "suede", "canvas_with_leather_trim"], "decision": "INSPECTION_REQUIRED"},
+    {"trigger_code": "powdery_surface", "condition": "powdery_surface_reported == true", "severity": "hard", "materials": ["coated_cowhide", "natural_leather", "suede"], "decision": "INSPECTION_REQUIRED"},
+    {"trigger_code": "nap_matting_after_wet", "condition": "nap_matting_reported == true AND wet_event_reported == true", "severity": "hard", "materials": ["suede", "nubuck"], "decision": "INSPECTION_REQUIRED"},
+    {"trigger_code": "heavy_dye_transfer", "condition": "dye_transfer_reported == true", "severity": "conditional", "materials": ["all"], "decision": "CONDITIONAL"},
+    {"trigger_code": "handle_strain", "condition": "handle_strain_reported == true", "severity": "hard", "materials": ["all"], "decision": "INSPECTION_REQUIRED"},
+    {"trigger_code": "shape_collapse", "condition": "shape_collapse_reported == true", "severity": "conditional", "materials": ["all"], "decision": "CONDITIONAL"}
+  ],
+  "care_actions": {
+    "blot_with_lint_free_cloth": {"meaning": "Blot moisture with a soft lint-free cloth.", "constraints": ["Do not rub."]},
+    "dry_at_room_temperature": {"meaning": "Dry naturally at room temperature.", "constraints": ["Do not use direct heat."]},
+    "avoid_direct_heat": {"meaning": "Avoid dryer, radiator, hot car, and heat sources.", "constraints": []},
+    "avoid_direct_sunlight": {"meaning": "Avoid direct sunlight and window display.", "constraints": []},
+    "store_in_dust_bag": {"meaning": "Store in dust bag or protective cover.", "constraints": ["Consider ventilation."]},
+    "support_shape_in_storage": {"meaning": "Support item shape during storage.", "constraints": ["Do not over-compress."]},
+    "avoid_desiccant_for_leather": {"meaning": "Do not generally recommend anti-humidity sachets for leather.", "constraints": ["Use only when maker-specific advice supports it."]},
+    "ventilate_storage_area": {"meaning": "Ventilate storage area.", "constraints": []},
+    "wipe_after_use_soft_dry_cloth": {"meaning": "Wipe dust after use with soft dry cloth.", "constraints": ["Use caution for suede."]},
+    "brush_suede_gently_when_dry": {"meaning": "Gently brush suede when dry.", "constraints": ["Do not brush aggressively or while wet."]},
+    "avoid_abrasive_surfaces": {"meaning": "Avoid rough surfaces and floor contact.", "constraints": []},
+    "avoid_overpacking": {"meaning": "Avoid overpacking and heavy contents.", "constraints": []},
+    "rotate_usage": {"meaning": "Rotate use periodically.", "constraints": ["No exact day threshold in v1."]},
+    "avoid_oils_perfumes_sanitizers": {"meaning": "Avoid contact with oils, perfumes, cosmetics, and sanitizers.", "constraints": ["Prioritize for natural leather."]},
+    "escalate_to_brand_or_specialist": {"meaning": "Recommend brand or specialist inspection.", "constraints": ["Use for hard triggers."]}
+  },
+  "overall_decision_logic": [
+    {"if": "any_hard_inspection_trigger", "care_need": "HIGH", "inspection_need": "REQUIRED"},
+    {"if": "any_stress_label_HIGH", "care_need": "HIGH", "inspection_need": "CONDITIONAL"},
+    {"if": "any_stress_label_ELEVATED", "care_need": "MEDIUM_HIGH", "inspection_need": "CONDITIONAL"},
+    {"if": "two_or_more_CAUTION", "care_need": "MEDIUM", "inspection_need": "NONE_OR_CONDITIONAL"},
+    {"if": "one_CAUTION", "care_need": "LOW_MEDIUM", "inspection_need": "NONE"},
+    {"if": "all_LOW", "care_need": "LOW", "inspection_need": "NONE"}
+  ],
+  "validation_cases": [
+    {"case_id": "VC-001", "material": "natural_leather/vachetta", "scenario": "wet event, no symptom", "expected": {"humidity": "ELEVATED", "care_need": "MEDIUM_HIGH", "inspection_need": "CONDITIONAL"}},
+    {"case_id": "VC-002", "material": "natural_leather", "scenario": "visible mould", "expected": {"inspection_need": "REQUIRED"}},
+    {"case_id": "VC-003", "material": "suede", "scenario": "wet event plus nap matting", "expected": {"inspection_need": "REQUIRED"}},
+    {"case_id": "VC-004", "material": "coated_cowhide", "scenario": "sustained RH >65%, no symptom", "expected": {"humidity": "CAUTION", "care_need": "LOW_MEDIUM"}},
+    {"case_id": "VC-005", "material": "coated_cowhide/patent_or_glossy_finish", "scenario": "tacky coating", "expected": {"inspection_need": "REQUIRED"}},
+    {"case_id": "VC-006", "material": "canvas/coated_canvas", "scenario": "RH >80% stagnant plus odour", "expected": {"inspection_need": "REQUIRED"}},
+    {"case_id": "VC-007", "material": "printed_canvas", "scenario": "corner wear plus frequent use", "expected": {"abrasion": "ELEVATED", "usage": "ELEVATED", "care_need": "MEDIUM_HIGH"}},
+    {"case_id": "VC-008", "material": "canvas_with_leather_trim", "scenario": "RH <30% plus trim cracking", "expected": {"inspection_need": "REQUIRED"}},
+    {"case_id": "VC-009", "material": "suede", "scenario": "direct sun exposure plus fading", "expected": {"uv_light": "ELEVATED", "inspection_need": "CONDITIONAL"}},
+    {"case_id": "VC-010", "material": "coated_cowhide", "scenario": "overload plus shape collapse", "expected": {"physical_shock_abrasion": "CAUTION", "inspection_need": "CONDITIONAL"}},
+    {"case_id": "VC-011", "material": "coated_cowhide", "scenario": "90% RH for 48h, no symptom", "expected": {"humidity": "HIGH", "inspection_need": "CONDITIONAL"}}
+  ],
+  "open_questions": [
+    "How many hours of RH threshold breach should map to CAUTION or ELEVATED after beta validation?",
+    "Should repeated exposure pattern use 7-day or 30-day windows?",
+    "Should high usage be based on user baseline or service-wide percentile?",
+    "How should direct sunlight proxy be computed when no light sensor exists?",
+    "How should maxShock and motionCount handling signals be normalized by user baseline?",
+    "How should photo-based symptom detection be merged with user self-report?",
+    "Should material subtype be user-entered, product DB-derived, or image-estimated?"
+  ]
+}

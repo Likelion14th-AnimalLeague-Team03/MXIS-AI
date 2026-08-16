@@ -1,0 +1,137 @@
+{
+  "schemaVersion": "mxis-ai-api-v0.1",
+  "product": {
+    "productId": "MCM001",
+    "name": null,
+    "material": "coated_cowhide",
+    "materialSubtypes": [
+      "grained_coated_cowhide"
+    ],
+    "color": null
+  },
+  "featureSummary": {
+    "avgTemperature": 24.85,
+    "avgHumidity": 68.1,
+    "rhHoursGt65": 0.333,
+    "rhHoursGt80": 0.0,
+    "rhHoursGt90": 0.0,
+    "rhHoursLt30": 0.0,
+    "leatherMouldDose": 0.0,
+    "tempHoursAbove30": 0.0,
+    "warmMoistExposureHours": 0.0,
+    "motionTotal": 9,
+    "activeWindowCount": 1,
+    "maxShock": 0.32
+  },
+  "aiCareSummary": {
+    "generatedAt": "2026-08-16T17:58:54.154626Z",
+    "analysisWindowDays": 7,
+    "dataSufficiency": {
+      "status": "INSUFFICIENT_DATA",
+      "reason": "MIN_READING_COUNT_NOT_MET",
+      "validReadingCount": 2,
+      "coverageHours": 0.333,
+      "lastMeasuredAt": "2024-12-25T10:54:16Z",
+      "lastSyncedAt": null
+    },
+    "productCondition": {
+      "label": "Collecting Data",
+      "score": null,
+      "primaryFactor": null,
+      "summary": "제품 상태 분석을 위해 데이터를 수집하고 있습니다."
+    },
+    "stressLabels": {
+      "humidity": "LOW",
+      "temperatureHeat": "LOW",
+      "dryness": "LOW",
+      "handling": "LOW",
+      "usageRest": "LOW",
+      "uvLight": "UNKNOWN"
+    },
+    "careDecision": {
+      "careNeed": "LOW",
+      "inspectionNeed": "NONE",
+      "recommendedActions": [],
+      "doNotDo": []
+    },
+    "explanation": {
+      "short": "제품 상태 분석을 위해 데이터를 수집하고 있습니다.",
+      "reasonBullets": [
+        "최소 분석 기준을 채우려면 유효한 센서 데이터가 더 필요합니다.",
+        "데이터가 충분히 쌓이면 온습도와 움직임 노출을 함께 해석합니다."
+      ],
+      "sensorLimitations": [
+        "현재 센서는 UV/light와 표면 증상을 직접 측정하지 않습니다."
+      ]
+    },
+    "reservationCta": {
+      "recommended": false,
+      "level": "NONE",
+      "title": null,
+      "description": null,
+      "suggestedServiceType": null,
+      "prefillNote": null
+    },
+    "evidence": {
+      "matchedKbEntries": [
+        "KB-001",
+        "KB-002",
+        "KB-003",
+        "KB-004",
+        "KB-005",
+        "KB-006"
+      ],
+      "triggeredRules": [
+        "light_not_measured_by_available_sensors"
+      ],
+      "sourceLevel": "A"
+    },
+    "debug": {
+      "featureVersion": "mxis-feature-extractor-v0.1",
+      "ruleVersion": "care-model-v1.1-preventive-tier-draft"
+    },
+    "llmCopy": {
+      "homeSummary": {
+        "short": "제품 상태 분석을 위해 데이터를 수집하고 있습니다."
+      },
+      "diagnosisHome": {
+        "short": "제품 상태 분석을 위해 데이터를 수집하고 있습니다.",
+        "reasonBullets": [
+          "최소 분석 기준을 채우려면 유효한 센서 데이터가 더 필요합니다.",
+          "데이터가 충분히 쌓이면 온습도와 움직임 노출을 함께 해석합니다."
+        ]
+      },
+      "careReport": {
+        "short": "제품 상태 분석을 위해 데이터를 수집하고 있습니다.",
+        "reasonBullets": [
+          "최소 분석 기준을 채우려면 유효한 센서 데이터가 더 필요합니다.",
+          "데이터가 충분히 쌓이면 온습도와 움직임 노출을 함께 해석합니다."
+        ]
+      },
+      "environmentDetail": {
+        "short": "그래프의 순간값보다 안정 범위를 벗어난 누적 시간이 관리 판단에 더 중요합니다.",
+        "bullets": [
+          "최소 분석 기준을 채우려면 유효한 센서 데이터가 더 필요합니다.",
+          "데이터가 충분히 쌓이면 온습도와 움직임 노출을 함께 해석합니다."
+        ]
+      },
+      "careGuide": {
+        "weeklyTip": "제품 상태 분석을 위해 데이터를 수집하고 있습니다.",
+        "recommendedActionTitle": null,
+        "recommendedActionDescription": null,
+        "doNotDo": []
+      },
+      "reservationCta": {
+        "title": null,
+        "description": null,
+        "prefillNote": null
+      }
+    },
+    "copyGeneration": {
+      "source": "deterministic_fallback",
+      "model": null,
+      "error": "OpenAI generation is disabled.",
+      "rawResponseId": null
+    }
+  }
+}

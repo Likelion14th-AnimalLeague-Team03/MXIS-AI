@@ -1,0 +1,78 @@
+[
+  {
+    "caseId": "FE-001",
+    "input": {
+      "productId": "MCM001",
+      "deviceId": "SC001",
+      "materialId": "coated_cowhide",
+      "analysisWindowDays": 7,
+      "samplingWindowSeconds": 600,
+      "sensorReadings": [
+        {"sequence": 1, "measuredAt": 1735123456, "temperature": 24.8, "humidity": 52.0, "maxShock": 0.1, "motionCount": 0}
+      ]
+    },
+    "expected": {
+      "dataSufficiency.status": "INSUFFICIENT_DATA",
+      "dataSufficiency.reason": "MIN_READING_COUNT_NOT_MET",
+      "environmentFeatures.rhHoursGt657d": 0.0,
+      "handlingFeatures.motionTotal7d": 0
+    }
+  },
+  {
+    "caseId": "FE-002",
+    "input": {
+      "productId": "MCM002",
+      "deviceId": "SC002",
+      "materialId": "coated_cowhide",
+      "analysisWindowDays": 7,
+      "samplingWindowSeconds": 600,
+      "sensorReadings": []
+    },
+    "expected": {
+      "dataSufficiency.status": "NO_DATA",
+      "dataSufficiency.reason": "NO_VALID_READING",
+      "dataSufficiency.validReadingCount": 0,
+      "qualityFlags.lightUnavailable": true
+    }
+  },
+  {
+    "caseId": "FE-003",
+    "input": {
+      "productId": "MCM003",
+      "deviceId": "SC003",
+      "materialId": "coated_cowhide",
+      "analysisWindowDays": 7,
+      "samplingWindowSeconds": 600,
+      "sensorReadings": [
+        {"sequence": 1, "measuredAt": 1735123456, "temperature": 24.8, "humidity": 90.0, "maxShock": 0.1, "motionCount": 0},
+        {"sequence": 2, "measuredAt": 1735124056, "temperature": 24.8, "humidity": 90.0, "maxShock": 0.1, "motionCount": 0}
+      ]
+    },
+    "expected": {
+      "environmentFeatures.rhHoursGt907d": 0.333,
+      "environmentFeatures.leatherMouldDose7d": 0.0069
+    }
+  },
+  {
+    "caseId": "FE-004",
+    "input": {
+      "productId": "MCM004",
+      "deviceId": "SC004",
+      "materialId": "canvas",
+      "analysisWindowDays": 7,
+      "samplingWindowSeconds": 600,
+      "sensorReadings": [
+        {"sequence": 1, "measuredAt": 0, "temperature": 24.8, "humidity": 52.0, "maxShock": 0.1, "motionCount": 1},
+        {"sequence": 2, "measuredAt": 1735123456, "temperature": 28.0, "humidity": 72.0, "maxShock": 1.2, "motionCount": 3},
+        {"sequence": 3, "measuredAt": 1735124056, "temperature": 31.0, "humidity": 72.0, "maxShock": 2.2, "motionCount": 5}
+      ]
+    },
+    "expected": {
+      "dataSufficiency.invalidTimestampCount": 1,
+      "environmentFeatures.rhHoursGt707d": 0.333,
+      "environmentFeatures.tempHoursAbove307d": 0.167,
+      "handlingFeatures.motionTotal7d": 8,
+      "handlingFeatures.shockWindowsGt2g7d": 1
+    }
+  }
+]

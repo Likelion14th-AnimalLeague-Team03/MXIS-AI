@@ -1,0 +1,92 @@
+{
+  "schemaVersion": "mxis-ai-output-contract-v0.1",
+  "createdAt": "2026-08-16",
+  "sharedBlock": "aiCareSummary",
+  "enums": {
+    "dataSufficiencyStatus": ["SUFFICIENT", "INSUFFICIENT_DATA", "STALE_DATA", "NO_DATA"],
+    "productConditionLabel": ["Excellent", "Standard", "Needs Attention", "Collecting Data"],
+    "stressLabel": ["LOW", "CAUTION", "ELEVATED", "HIGH", "INSPECTION_REQUIRED", "UNKNOWN"],
+    "careNeed": ["LOW", "LOW_MEDIUM", "MEDIUM", "MEDIUM_HIGH", "HIGH"],
+    "inspectionNeed": ["NONE", "CONDITIONAL", "REQUIRED"],
+    "reservationLevel": ["NONE", "OPTIONAL", "RECOMMENDED", "REQUIRED"]
+  },
+  "aiCareSummary": {
+    "generatedAt": "iso_datetime",
+    "analysisWindowDays": "integer",
+    "dataSufficiency": {
+      "status": "dataSufficiencyStatus",
+      "reason": "string|null",
+      "validReadingCount": "integer",
+      "coverageHours": "number",
+      "lastMeasuredAt": "iso_datetime|null",
+      "lastSyncedAt": "iso_datetime|null"
+    },
+    "productCondition": {
+      "label": "productConditionLabel",
+      "score": "integer|null",
+      "primaryFactor": "humidity|temperature_heat|dryness|handling|usage_rest|uv_light|null",
+      "summary": "string"
+    },
+    "stressLabels": {
+      "humidity": "stressLabel",
+      "temperatureHeat": "stressLabel",
+      "dryness": "stressLabel",
+      "handling": "stressLabel",
+      "usageRest": "stressLabel",
+      "uvLight": "stressLabel"
+    },
+    "careDecision": {
+      "careNeed": "careNeed",
+      "inspectionNeed": "inspectionNeed",
+      "recommendedActions": "CareAction[]",
+      "doNotDo": "CareAction[]"
+    },
+    "explanation": {
+      "short": "string",
+      "reasonBullets": "string[]",
+      "sensorLimitations": "string[]"
+    },
+    "reservationCta": {
+      "recommended": "boolean",
+      "level": "reservationLevel",
+      "title": "string|null",
+      "description": "string|null",
+      "suggestedServiceType": "string|null",
+      "prefillNote": "string|null"
+    },
+    "evidence": {
+      "optional": true,
+      "matchedKbEntries": "string[]",
+      "triggeredRules": "string[]",
+      "sourceLevel": "A|B|C|null"
+    },
+    "debug": {
+      "optional": true,
+      "featureVersion": "string",
+      "ruleVersion": "string"
+    }
+  },
+  "careAction": {
+    "code": "string",
+    "title": "string",
+    "description": "string",
+    "priority": "integer",
+    "category": "string",
+    "durationHint": "string|null",
+    "isPrimary": "boolean"
+  },
+  "endpoints": {
+    "homeSummary": "GET /home/summary",
+    "careDiagnosisHome": "GET /care/diagnosis/home",
+    "careReport": "GET /care/report?period=7d|30d",
+    "careEnvironment": "GET /care/environment?period=7d|30d|1y",
+    "careGuide": "GET /care/guide?productId=..."
+  },
+  "mvpNotes": [
+    "Use aiCareSummary as the shared frontend AI block.",
+    "Score is a care condition score, not damage probability.",
+    "UV/light should be UNKNOWN unless user or external data exists.",
+    "IMU-derived handling is not a damage threshold.",
+    "Evidence/debug blocks are optional and not displayed in MVP."
+  ]
+}
