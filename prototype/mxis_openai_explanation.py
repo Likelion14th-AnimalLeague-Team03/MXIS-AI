@@ -10,12 +10,14 @@ from __future__ import annotations
 
 import json
 import os
+import ssl
 import urllib.error
 import urllib.request
 from typing import Any
 
 
 DEFAULT_MODEL = os.environ.get("OPENAI_MODEL", "gpt-5-mini")
+DEFAULT_TIMEOUT_SECONDS = float(os.environ.get("OPENAI_TIMEOUT_SECONDS", "45"))
 OPENAI_RESPONSES_URL = "https://api.openai.com/v1/responses"
 
 FORBIDDEN_CLAIMS = [
@@ -165,17 +167,33 @@ LLM_OUTPUT_SCHEMA = {
 
 def openai_enabled(input_data: dict[str, Any]) -> bool:
     llm_options = input_data.get("llm", {}) or {}
-    if llm_options.get("enabled") is True:
-        return True
+    if "enabled" in llm_options:
+        return bool(llm_options.get("enabled"))
     return os.environ.get("MXIS_USE_OPENAI", "").lower() in {"1", "true", "yes", "on"}
 
 
-def generate_openai_copy(input_data: dict[str, Any], timeout_seconds: float = 12.0) -> dict[str, Any]:
-    api_key = os.environ.get("OPENAI_API_KEY")
+def openai_status() -> dict[str, Any]:
+    api_key = normalized_api_key()
+    return {
+        "enabledByEnv": os.environ.get("MXIS_USE_OPENAI", "").lower() in {"1", "true", "yes", "on"},
+        "apiKeyConfigured": bool(api_key),
+        "apiKeyHasSurroundingWhitespace": api_key != (os.environ.get("OPENAI_API_KEY") or ""),
+        "model": DEFAULT_MODEL,
+        "timeoutSeconds": DEFAULT_TIMEOUT_SECONDS,
+        "sslCertFile": os.environ.get("SSL_CERT_FILE"),
+        "openAiCaBundle": os.environ.get("OPENAI_CA_BUNDLE"),
+        "skipTlsVerify": os.environ.get("OPENAI_SKIP_TLS_VERIFY", "").lower() in {"1", "true", "yes", "on"},
+    }
+
+
+def generate_openai_copy(input_data: dict[str, Any], timeout_seconds: float | None = None) -> dict[str, Any]:
+    api_key = normalized_api_key()
     if not api_key:
         raise RuntimeError("OPENAI_API_KEY is not set.")
 
-    model = (input_data.get("llm", {}) or {}).get("model") or DEFAULT_MODEL
+    llm_options = input_data.get("llm", {}) or {}
+    model = llm_options.get("model") or DEFAULT_MODEL
+    timeout_seconds = float(llm_options.get("timeoutSeconds") or timeout_seconds or DEFAULT_TIMEOUT_SECONDS)
     payload = {
         "model": model,
         "input": [
@@ -219,7 +237,7 @@ def generate_openai_copy(input_data: dict[str, Any], timeout_seconds: float = 12
     )
 
     try:
-        with urllib.request.urlopen(request, timeout=timeout_seconds) as response:
+        with urllib.request.urlopen(request, timeout=timeout_seconds, context=ssl_context()) as response:
             body = json.loads(response.read().decode("utf-8"))
     except urllib.error.HTTPError as exc:
         detail = exc.read().decode("utf-8", errors="replace")
@@ -234,6 +252,26 @@ def generate_openai_copy(input_data: dict[str, Any], timeout_seconds: float = 12
         "rawResponseId": body.get("id"),
         "copy": generated,
     }
+
+
+def normalized_api_key() -> str:
+    return (os.environ.get("OPENAI_API_KEY") or "").strip()
+
+
+def ssl_context() -> ssl.SSLContext:
+    if os.environ.get("OPENAI_SKIP_TLS_VERIFY", "").lower() in {"1", "true", "yes", "on"}:
+        return ssl._create_unverified_context()
+
+    cafile = os.environ.get("OPENAI_CA_BUNDLE") or os.environ.get("SSL_CERT_FILE")
+    if cafile:
+        return ssl.create_default_context(cafile=cafile)
+
+    try:
+        import certifi
+
+        return ssl.create_default_context(cafile=certifi.where())
+    except Exception:
+        return ssl.create_default_context()
 
 
 def extract_output_text(response_body: dict[str, Any]) -> str:
@@ -275,4 +313,3 @@ def fallback_generation(reason: str | None = None) -> dict[str, Any]:
         "model": None,
         "error": reason,
     }
-

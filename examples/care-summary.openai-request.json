@@ -26,7 +26,7 @@
   "userEvents": {},
   "userSymptoms": {},
   "llm": {
-    "enabled": false,
+    "enabled": true,
     "model": "gpt-5-mini",
     "locale": "ko-KR",
     "timeoutSeconds": 45,

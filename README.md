@@ -72,6 +72,8 @@ curl -X POST http://127.0.0.1:8765/ai/care-summary \
   --data @examples/care-summary.request.json
 ```
 
+위 요청은 `llm.enabled=false`인 기본 fallback 테스트입니다.
+
 ## OpenAI 설명 생성 사용
 
 OpenAI를 사용하면 프론트 화면별 자연어 설명을 생성할 수 있습니다.
@@ -80,6 +82,7 @@ OpenAI를 사용하면 프론트 화면별 자연어 설명을 생성할 수 있
 OPENAI_API_KEY=sk-... \
 MXIS_USE_OPENAI=true \
 OPENAI_MODEL=gpt-5-mini \
+OPENAI_TIMEOUT_SECONDS=45 \
 python3 prototype/mxis_ai_api_server.py --host 127.0.0.1 --port 8765
 ```
 
@@ -90,12 +93,63 @@ python3 prototype/mxis_ai_api_server.py --host 127.0.0.1 --port 8765
   "llm": {
     "enabled": true,
     "model": "gpt-5-mini",
-    "locale": "ko-KR"
+    "locale": "ko-KR",
+    "timeoutSeconds": 45
   }
 }
 ```
 
 OpenAI가 꺼져 있거나, API key가 없거나, 생성 결과 검증에 실패하면 deterministic fallback copy가 자동으로 반환됩니다.
+
+OpenAI 설정 상태 확인:
+
+```bash
+curl http://127.0.0.1:8765/ai/openai-status
+```
+
+주의: `examples/care-summary.request.json`은 기본값이 `"enabled": false`입니다. 이 파일 그대로 테스트하면 OpenAI를 호출하지 않습니다. OpenAI를 테스트하려면 request body의 `llm.enabled`를 `true`로 바꾸거나, `llm` 블록을 제거하고 `MXIS_USE_OPENAI=true` 환경변수로 켜면 됩니다.
+
+OpenAI 테스트용 요청:
+
+```bash
+curl -X POST http://127.0.0.1:8765/ai/care-summary \
+  -H "Content-Type: application/json" \
+  --data @examples/care-summary.openai-request.json
+```
+
+macOS에서 SSL 인증서 오류가 나는 경우:
+
+```text
+certificate verify failed: unable to get local issuer certificate
+```
+
+아래 중 하나로 해결할 수 있습니다.
+
+권장 방법:
+
+```bash
+python3 -m pip install certifi
+```
+
+또는 `certifi` 경로를 명시합니다.
+
+```bash
+export SSL_CERT_FILE=$(python3 -m certifi)
+```
+
+특정 CA bundle을 쓰고 싶다면:
+
+```bash
+export OPENAI_CA_BUNDLE=/path/to/cacert.pem
+```
+
+로컬 임시 테스트에서만 TLS 검증을 끄려면:
+
+```bash
+export OPENAI_SKIP_TLS_VERIFY=true
+```
+
+`OPENAI_SKIP_TLS_VERIFY=true`는 개발 테스트 외에는 사용하지 않는 것을 권장합니다.
 
 ## 검증
 

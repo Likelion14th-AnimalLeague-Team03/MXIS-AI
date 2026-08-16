@@ -640,6 +640,7 @@ class MxisHandler(BaseHTTPRequestHandler):
                     "schemaVersion": API_VERSION,
                     "endpoints": {
                         "health": "GET /health",
+                        "openAiStatus": "GET /ai/openai-status",
                         "demoCareSummary": "GET /ai/demo-care-summary",
                         "careSummary": "POST /ai/care-summary",
                     },
@@ -648,6 +649,9 @@ class MxisHandler(BaseHTTPRequestHandler):
             return
         if path == "/health":
             response(self, 200, {"status": "ok", "schemaVersion": API_VERSION})
+            return
+        if path == "/ai/openai-status":
+            response(self, 200, {"schemaVersion": API_VERSION, "openai": mxis_openai_explanation.openai_status()})
             return
         if path == "/ai/demo-care-summary":
             demo = mxis_feature_extractor.demo_input()
@@ -693,6 +697,7 @@ def not_found_payload() -> dict[str, Any]:
         "availableEndpoints": [
             "GET /",
             "GET /health",
+            "GET /ai/openai-status",
             "GET /ai/demo-care-summary",
             "POST /ai/care-summary",
         ],
