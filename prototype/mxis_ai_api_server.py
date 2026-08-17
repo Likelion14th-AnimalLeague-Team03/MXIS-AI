@@ -16,6 +16,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import os
 from datetime import datetime, timezone
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from typing import Any
@@ -27,6 +28,7 @@ import mxis_rule_evaluator
 
 
 API_VERSION = "mxis-ai-api-v0.1"
+INTERNAL_API_KEY_HEADER = "X-MXIS-AI-Key"
 
 LABEL_ORDER = {
     "UNKNOWN": -1,
@@ -664,6 +666,16 @@ class MxisHandler(BaseHTTPRequestHandler):
         if path != "/ai/care-summary":
             response(self, 404, not_found_payload())
             return
+        if not internal_api_key_authorized(self.headers.get(INTERNAL_API_KEY_HEADER)):
+            response(
+                self,
+                401,
+                {
+                    "error": "unauthorized",
+                    "message": "Invalid internal AI API key.",
+                },
+            )
+            return
         try:
             length = int(self.headers.get("Content-Length", "0"))
             raw_body = self.rfile.read(length).decode("utf-8")
@@ -688,6 +700,13 @@ def normalized_path(raw_path: str) -> str:
     if path != "/" and path.endswith("/"):
         path = path.rstrip("/")
     return path
+
+
+def internal_api_key_authorized(header_value: str | None) -> bool:
+    expected = (os.environ.get("MXIS_AI_INTERNAL_API_KEY") or "").strip()
+    if not expected:
+        return True
+    return (header_value or "").strip() == expected
 
 
 def not_found_payload() -> dict[str, Any]:
