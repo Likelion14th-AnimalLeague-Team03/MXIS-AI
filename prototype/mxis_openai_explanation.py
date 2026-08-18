@@ -55,7 +55,8 @@ DEVELOPER_PROMPT = """Follow these rules:
 8. If inspectionNeed is REQUIRED, recommend brand or specialist inspection without guaranteeing damage.
 9. If inspectionNeed is CONDITIONAL, ask the user to check visible symptoms and offer inspection as an option.
 10. Generate copy for each frontend screen context in screenCopy.
-11. Keep the output within the schema. Do not add extra fields."""
+11. screenCopy.careGuide.careType must be one of ventilated_shade_storage or dry_soft_cloth_wipe.
+12. Keep the output within the schema. Do not add extra fields."""
 
 
 LLM_OUTPUT_SCHEMA = {
@@ -141,8 +142,26 @@ LLM_OUTPUT_SCHEMA = {
                 "careGuide": {
                     "type": "object",
                     "additionalProperties": False,
-                    "required": ["weeklyTip", "recommendedActionTitle", "recommendedActionDescription", "doNotDo"],
+                    "required": [
+                        "careType",
+                        "title",
+                        "description",
+                        "steps",
+                        "tip",
+                        "weeklyTip",
+                        "recommendedActionTitle",
+                        "recommendedActionDescription",
+                        "doNotDo",
+                    ],
                     "properties": {
+                        "careType": {
+                            "type": "string",
+                            "enum": ["ventilated_shade_storage", "dry_soft_cloth_wipe"],
+                        },
+                        "title": {"type": "string"},
+                        "description": {"type": "string"},
+                        "steps": {"type": "array", "items": {"type": "string"}},
+                        "tip": {"type": "string"},
                         "weeklyTip": {"type": "string"},
                         "recommendedActionTitle": {"type": ["string", "null"]},
                         "recommendedActionDescription": {"type": ["string", "null"]},
@@ -305,6 +324,10 @@ def validate_generated_copy(generated: dict[str, Any], input_data: dict[str, Any
     reservation = generated.get("reservationCopy", {})
     if inspection_need == "NONE" and any(reservation.get(key) for key in ("title", "description", "prefillNote")):
         raise RuntimeError("reservationCopy must be null when inspectionNeed is NONE.")
+
+    care_type = generated.get("screenCopy", {}).get("careGuide", {}).get("careType")
+    if care_type not in {"ventilated_shade_storage", "dry_soft_cloth_wipe"}:
+        raise RuntimeError("screenCopy.careGuide.careType must be an allowed care type.")
 
 
 def fallback_generation(reason: str | None = None) -> dict[str, Any]:

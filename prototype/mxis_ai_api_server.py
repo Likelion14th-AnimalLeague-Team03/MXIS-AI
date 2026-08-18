@@ -424,10 +424,12 @@ def llm_analysis_input(
 def deterministic_screen_copy(
     fallback_explanation: dict[str, Any],
     fallback_reservation: dict[str, Any],
+    condition: dict[str, Any],
     recommended_actions: list[dict[str, Any]],
     do_not_do: list[dict[str, Any]],
 ) -> dict[str, Any]:
     primary = recommended_actions[0] if recommended_actions else {}
+    guide = care_guide_copy(condition, fallback_explanation, primary, do_not_do)
     return {
         "homeSummary": {"short": fallback_explanation["short"]},
         "diagnosisHome": {
@@ -443,9 +445,10 @@ def deterministic_screen_copy(
             "bullets": fallback_explanation["reasonBullets"],
         },
         "careGuide": {
-            "weeklyTip": fallback_explanation["short"],
-            "recommendedActionTitle": primary.get("title"),
-            "recommendedActionDescription": primary.get("description"),
+            **guide,
+            "weeklyTip": guide["tip"],
+            "recommendedActionTitle": guide["title"],
+            "recommendedActionDescription": guide["description"],
             "doNotDo": [item["description"] for item in do_not_do],
         },
         "reservationCta": {
@@ -453,6 +456,43 @@ def deterministic_screen_copy(
             "description": fallback_reservation.get("description"),
             "prefillNote": fallback_reservation.get("prefillNote"),
         },
+    }
+
+
+def care_guide_copy(
+    condition: dict[str, Any],
+    fallback_explanation: dict[str, Any],
+    primary_action: dict[str, Any],
+    do_not_do: list[dict[str, Any]],
+) -> dict[str, Any]:
+    factor = condition.get("primaryFactor")
+    if factor in {"humidity", "temperature_heat", "dryness", "uv_light"}:
+        return {
+            "careType": "ventilated_shade_storage",
+            "title": "이번 주에는 직사광선을 피해 통풍이 잘되는 공간에 보관하세요",
+            "description": primary_action.get("description")
+            or "최근 보관 환경을 기준으로 열과 습도 변화에 주의하는 것이 좋습니다.",
+            "steps": [
+                "직사광선이 닿지 않는 위치로 옮겨주세요.",
+                "통풍이 잘되는 공간에 자연스럽게 보관해주세요.",
+                "습한 공간이나 열이 많은 공간은 피해주세요.",
+            ],
+            "tip": fallback_explanation["short"],
+            "doNotDo": [item["description"] for item in do_not_do],
+        }
+
+    return {
+        "careType": "dry_soft_cloth_wipe",
+        "title": "이번 주에는 마른 부드러운 천으로 표면을 정돈해주세요",
+        "description": primary_action.get("description")
+        or "최근 사용 기록을 기준으로 가벼운 표면 정돈 중심의 관리가 적합합니다.",
+        "steps": [
+            "마른 부드러운 천을 준비해주세요.",
+            "표면을 결 방향으로 가볍게 닦아주세요.",
+            "강한 힘을 주지 않고 마무리해주세요.",
+        ],
+        "tip": fallback_explanation["short"],
+        "doNotDo": [item["description"] for item in do_not_do],
     }
 
 
@@ -469,6 +509,7 @@ def maybe_generate_llm_copy(
     fallback_screen_copy = deterministic_screen_copy(
         fallback_explanation,
         fallback_reservation,
+        condition,
         recommended_actions,
         do_not_do,
     )
